@@ -11,6 +11,8 @@ use App\Exercise\Enum\ExerciseCategory;
 use App\Exercise\Enum\ForceType;
 use App\Exercise\Enum\Mechanic;
 use App\Exercise\Exercise;
+use App\Workout\Workout;
+use App\Workout\WorkoutExercise;
 
 final class ExerciseFixture
 {
@@ -47,5 +49,13 @@ final class ExerciseFixture
             met: 6.0,
             equipment: $equipment ?? ($bodyweight ? null : Equipment::Barbell),
         );
+    }
+
+    public static function workout(string $name = 'Pecs', ?Exercise $exercise = null): Workout
+    {
+        $workout = new Workout($name);
+        new WorkoutExercise($workout, $exercise ?? self::exercise(), 1, sets: 4, reps: 8, weight: 60.0);
+
+        return $workout;
     }
 }

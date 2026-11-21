@@ -26,6 +26,7 @@ Always use the Makefile, never the underlying tools directly.
 
 ```
 make install   composer install
+make migrate   run the database migrations
 ```
 
 ## Commits

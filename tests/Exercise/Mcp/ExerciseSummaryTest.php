@@ -49,7 +49,6 @@ final class ExerciseSummaryTest extends TestCase
 
         self::assertArrayNotHasKey('description', $serialized);
         self::assertArrayNotHasKey('instructions', $serialized);
-        self::assertArrayNotHasKey('images', $serialized);
     }
 
     public function testItSerializesExactlyWhatItsSchemaAnnounces(): void
@@ -87,7 +86,6 @@ final class ExerciseSummaryTest extends TestCase
             instructions: ['Lie down.', 'Press.'],
             tags: ['requires_bench'],
             goals: ['strength'],
-            images: ['flat' => ['start' => 'a.webp', 'peak' => 'b.webp']],
             bodyweight: false,
             unilateral: false,
             met: 6.0,

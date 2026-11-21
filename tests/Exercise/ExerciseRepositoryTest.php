@@ -172,7 +172,6 @@ final class ExerciseRepositoryTest extends KernelTestCase
             instructions: ['Do it.'],
             tags: [],
             goals: [],
-            images: [],
             bodyweight: $bodyweight,
             unilateral: false,
             met: 5.0,

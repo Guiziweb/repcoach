@@ -15,7 +15,7 @@ services:
             - '../src/Exercise/Import/{DatasetUnavailable,InvalidExerciseRow}.php'
             - '../src/Exercise/Mcp/ExerciseSummary.php'
             - '../src/Session/{ClosedStatus,PerformedSet,SessionExercise,SessionNotRunning,SessionStatus,SessionTally,SessionTransition,WorkoutSession}.php'
-            - '../src/Session/Mcp/{PerformedSetView,SessionPlanView,SessionSummary}.php'
+            - '../src/Session/Mcp/{PerformedSetView,SessionOverview,SessionPlanView,SessionSummary}.php'
             - '../src/Workout/{Workout,WorkoutExercise,WorkoutName}.php'
             - '../src/Workout/Mcp/{PlannedExerciseView,WorkoutSummary}.php'
             - '../src/Shared/{Effort,ExerciseEffort,PlannedEffort,Limits,Minutes,NotFound,Reason,Refused}.php'

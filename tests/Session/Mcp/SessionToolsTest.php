@@ -454,6 +454,15 @@ final class SessionToolsTest extends KernelTestCase
         self::assertSame('none', ($this->kit->current)()->status);
     }
 
+    public function testAnAbortedSessionFreesTheSlot(): void
+    {
+        ($this->kit->start)('Pecs');
+        $summary = ($this->kit->abort)();
+
+        self::assertSame('aborted', $summary->status);
+        self::assertSame('Pecs', ($this->kit->start)('Pecs')->workout);
+    }
+
     private function workoutKit(WorkoutRepository $workouts): WorkoutKit
     {
         $exercises = self::getContainer()->get(ExerciseRepository::class);

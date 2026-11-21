@@ -1,0 +1,28 @@
+framework:
+    workflows:
+        session:
+            type: state_machine
+            marking_store:
+                type: method
+                property: status
+            supports:
+                - App\Session\WorkoutSession
+            initial_marking: !php/enum App\Session\SessionStatus::Running
+            places: !php/enum App\Session\SessionStatus
+            transitions:
+                - name: !php/enum App\Session\SessionTransition::Pause->value
+                  from: !php/enum App\Session\SessionStatus::Running
+                  to: !php/enum App\Session\SessionStatus::Paused
+                - name: !php/enum App\Session\SessionTransition::Resume->value
+                  from: !php/enum App\Session\SessionStatus::Paused
+                  to: !php/enum App\Session\SessionStatus::Running
+                - name: !php/enum App\Session\SessionTransition::Finish->value
+                  from:
+                      - !php/enum App\Session\SessionStatus::Running
+                      - !php/enum App\Session\SessionStatus::Paused
+                  to: !php/enum App\Session\SessionStatus::Finished
+                - name: !php/enum App\Session\SessionTransition::Abort->value
+                  from:
+                      - !php/enum App\Session\SessionStatus::Running
+                      - !php/enum App\Session\SessionStatus::Paused
+                  to: !php/enum App\Session\SessionStatus::Aborted

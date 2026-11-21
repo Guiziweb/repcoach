@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Workout\Mcp;
 
 use App\Exercise\ExerciseRepository;
+use App\Session\WorkoutSessionRepository;
 use App\Shared\Limits;
 use App\Tests\ExerciseFixture;
 use App\Tests\Workout\Kit;
@@ -42,10 +43,13 @@ final class WorkoutToolsTest extends KernelTestCase
         $workouts = self::getContainer()->get(WorkoutRepository::class);
         self::assertInstanceOf(WorkoutRepository::class, $workouts);
 
+        $sessions = self::getContainer()->get(WorkoutSessionRepository::class);
+        self::assertInstanceOf(WorkoutSessionRepository::class, $sessions);
+
         $exercises = self::getContainer()->get(ExerciseRepository::class);
         self::assertInstanceOf(ExerciseRepository::class, $exercises);
 
-        $this->kit = new Kit($entityManager, $workouts, $exercises);
+        $this->kit = new Kit($entityManager, $workouts, $sessions, $exercises);
     }
 
     public function testItCreatesAnEmptyWorkout(): void
@@ -409,6 +413,16 @@ final class WorkoutToolsTest extends KernelTestCase
         $this->expectExceptionMessageIsOrContains('already exists');
 
         ($this->kit->duplicateWorkout)('Pecs', 'Pecs');
+    }
+
+    public function testItDeletesAWorkout(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+        ($this->kit->createWorkout)('Dos');
+
+        $listed = ($this->kit->deleteWorkout)('Pecs')['workouts'];
+
+        self::assertSame(['Dos'], array_map(static fn (WorkoutSummary $w): string => $w->name, $listed));
     }
 
     protected function tearDown(): void

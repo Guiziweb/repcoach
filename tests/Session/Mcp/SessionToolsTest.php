@@ -6,6 +6,7 @@ namespace App\Tests\Session\Mcp;
 
 use App\Exercise\ExerciseRepository;
 use App\Session\PerformedSetRepository;
+use App\Session\WorkoutSession;
 use App\Session\WorkoutSessionRepository;
 use App\Shared\Limits;
 use App\Tests\ExerciseFixture;
@@ -491,12 +492,35 @@ final class SessionToolsTest extends KernelTestCase
         ($this->kit->changeSet)(999, reps: 5);
     }
 
+    public function testDeletingAWorkoutLeavesThePerformedSessionIntact(): void
+    {
+        ($this->kit->start)('Pecs');
+        ($this->kit->logSet)(position: 1, reps: 8, weight: 60.0);
+        $done = ($this->kit->finish)();
+
+        $workouts = self::getContainer()->get(WorkoutRepository::class);
+        self::assertInstanceOf(WorkoutRepository::class, $workouts);
+
+        ($this->workoutKit($workouts)->deleteWorkout)('Pecs');
+        $this->entityManager->clear();
+
+        $session = $this->entityManager->find(WorkoutSession::class, $done->id);
+        self::assertInstanceOf(WorkoutSession::class, $session);
+        self::assertSame('Pecs', $session->workoutName);
+        self::assertNull($session->workout);
+        self::assertCount(1, $session->getSets());
+        self::assertCount(1, $session->getPlan());
+    }
+
     private function workoutKit(WorkoutRepository $workouts): WorkoutKit
     {
+        $sessions = self::getContainer()->get(WorkoutSessionRepository::class);
+        self::assertInstanceOf(WorkoutSessionRepository::class, $sessions);
+
         $exercises = self::getContainer()->get(ExerciseRepository::class);
         self::assertInstanceOf(ExerciseRepository::class, $exercises);
 
-        return new WorkoutKit($this->entityManager, $workouts, $exercises);
+        return new WorkoutKit($this->entityManager, $workouts, $sessions, $exercises);
     }
 
     protected function tearDown(): void

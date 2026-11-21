@@ -1,0 +1,16 @@
+mcp:
+    servers:
+        default:
+            name: 'gym'
+            registry: '*'
+
+            session:
+                store: file
+                directory: '%kernel.project_dir%/var/mcp-sessions'
+
+            transports:
+                stdio: true
+                http: true
+
+            http:
+                path: /mcp

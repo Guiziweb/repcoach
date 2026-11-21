@@ -646,7 +646,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         }>,
  *     },
  *     uid?: bool|array{ // Uid configuration
- *         enabled?: bool|Param, // Default: false
+ *         enabled?: bool|Param, // Default: true
  *         default_uuid_version?: 7|6|4|1|Param, // Default: 7
  *         name_based_uuid_version?: 5|3|Param, // Default: 5
  *         name_based_uuid_namespace?: scalar|Param|null,
@@ -917,6 +917,252 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     enable_profiler?: bool|Param, // Whether or not to enable the profiler collector to calculate and visualize migration status. This adds some queries overhead. // Default: false
  *     transactional?: bool|Param, // Whether or not to wrap migrations in a single transaction. // Default: true
  * }
+ * @psalm-type McpConfig = array{
+ *     servers?: list<array{ // Default: []
+ *         name?: string|Param, // Name advertised to clients. Defaults to the configuration key. // Default: null
+ *         version?: string|Param, // Default: "0.0.1"
+ *         description?: string|Param, // Default: null
+ *         icons?: list<array{ // Default: []
+ *             src?: string|Param,
+ *             mime_type?: string|Param, // Default: null
+ *             sizes?: list<scalar|Param|null>,
+ *         }>,
+ *         website_url?: string|Param, // Default: null
+ *         pagination_limit?: int|Param, // Default: 50
+ *         instructions?: string|Param, // Default: null
+ *         transports?: array{
+ *             stdio?: bool|Param, // Expose the server over STDIO via the "mcp:server" command. // Default: false
+ *             http?: bool|Param, // Expose the server over HTTP via a controller and route. // Default: true
+ *         },
+ *         http?: array{
+ *             path?: string|Param, // HTTP endpoint path. Defaults to "/mcp/<name>". // Default: null
+ *             allowed_hosts?: mixed, // DNS rebinding protection hosts (without port). Leave unset to keep the SDK default (localhost only), set an array of hostnames to expose a public MCP server, or false to disable the protection entirely. // Default: null
+ *             allowed_origins?: list<scalar|Param|null>,
+ *         },
+ *         protocol_versions?: Param|string|list<"2024-11-05"|"2025-03-26"|"2025-06-18"|"2025-11-25"|"2026-07-28"|Param>,
+ *         request_state?: array{ // Signs the state a multi-round-trip answer carries through the client, which has no session to keep progress in. Required for a modern-era server whose handlers return an InputRequiredResult, and for one whose handlers call ClientGateway::elicit() more than once: the second ask has to carry the first answer to the next round.
+ *             key?: string|Param, // HMAC key, at least 32 bytes. The same value must reach every process that might serve the retry. // Default: null
+ *             ttl?: int|Param, // Seconds a minted state stays valid. // Default: 600
+ *         },
+ *         cache?: array{ // Cache hints the modern-era leg puts on its answers. The spec requires them on server/discover, the list methods and resources/read.
+ *             ttl_ms?: int|Param, // Default freshness in milliseconds. 0 refuses caching. // Default: 0
+ *             scope?: "private"|"public"|Param, // Default: "private"
+ *             methods?: array<string, array{ // Default: []
+ *                 ttl_ms?: int|Param,
+ *                 scope?: "private"|"public"|Param, // Default: "private"
+ *             }>,
+ *         },
+ *         subscriptions?: array{ // Delivery for "subscriptions/listen" streams, which replace the HTTP GET stream in 2026-07-28.
+ *             bus?: "none"|"memory"|"cache"|Param, // Default: "none"
+ *             cache_pool?: string|Param, // PSR-16 service for the "cache" bus. Under PHP-FPM the publisher and the stream are different workers, so "memory" cannot reach them. // Default: "cache.mcp.notifications"
+ *             lifetime?: float|Param, // Seconds a stream is held before the server closes it gracefully. 0 means until the client or the runtime ends it. // Default: 30.0
+ *         },
+ *         session?: array{ // Session storage. Every server needs its own store: session ids are not namespaced by server, so a shared store makes a session minted on one server valid on the others.
+ *             store?: "file"|"memory"|"cache"|"framework"|Param, // Default: "file"
+ *             directory?: string|Param, // Directory for the "file" store. Defaults to "%kernel.cache_dir%/mcp-sessions/<name>". // Default: null
+ *             cache_pool?: string|Param, // PSR-16 cache service for the "cache" store. // Default: "cache.mcp.sessions"
+ *             prefix?: string|Param, // Key prefix for the "cache" and "framework" stores and a "session.lock.factory" lock. Defaults to "mcp-<name>-". // Default: null
+ *             ttl?: int|Param, // Default: 3600
+ *             lock?: bool|array{ // Serializes the concurrent requests of one session, so none of them overwrites what another saved.
+ *                 enabled?: bool|Param, // Default: false
+ *                 factory?: string|Param, // Service id of a Symfony\Component\Lock\LockFactory, for a store shared across machines. Unset, the "file" store locks with flock() next to its session files. // Default: null
+ *                 timeout?: float|Param, // Seconds to wait for a lock held by another request of the same session. // Default: 30.0
+ *                 ttl?: float|Param, // Seconds a "factory" lock lives before its store expires it; must exceed the longest handler run. Ignored by the file lock. // Default: 300.0
+ *             },
+ *         },
+ *         registry?: array{ // The elements this server exposes, either as one list covering every kind or as a map narrowing each kind.
+ *             tools?: Param|string|list<scalar|Param|null>,
+ *             prompts?: Param|string|list<scalar|Param|null>,
+ *             resources?: Param|string|list<scalar|Param|null>,
+ *             resource_templates?: Param|string|list<scalar|Param|null>,
+ *             apps?: Param|string|list<scalar|Param|null>,
+ *             ...<string, mixed>
+ *         },
+ *     }>,
+ *     clients?: list<array{ // Default: []
+ *         client_info?: array{ // Identity advertised to every remote server of this client during the initialize handshake.
+ *             name?: string|Param, // Defaults to the configuration key. // Default: null
+ *             version?: string|Param, // Default: "0.0.1"
+ *             description?: string|Param, // Default: null
+ *         },
+ *         protocol_version?: "2024-11-05"|"2025-03-26"|"2025-06-18"|"2025-11-25"|"2026-07-28"|Param, // MCP protocol version to negotiate. Leave unset to keep the SDK default. // Default: null
+ *         capabilities?: array{ // Client capabilities advertised during the handshake. "roots", "sampling" and "elicitation" are derived from the handlers configured below.
+ *             roots_list_changed?: bool|Param, // Default: false
+ *         },
+ *         roots?: string|Param, // Service id implementing Mcp\Client\Handler\Request\RootsCallbackInterface. Answers the server's "roots/list" requests. // Default: null
+ *         sampling?: string|Param, // Service id implementing Mcp\Client\Handler\Request\SamplingCallbackInterface. Enables the "sampling" capability. // Default: null
+ *         elicitation?: string|Param, // Service id implementing Mcp\Client\Handler\Request\ElicitationCallbackInterface. Enables the "elicitation" capability. // Default: null
+ *         forward_server_logs?: bool|Param, // Forward logging notifications received from the remote servers to the "mcp" logger channel. // Default: true
+ *         init_timeout?: int|Param, // Default: 30
+ *         request_timeout?: int|Param, // Default: 120
+ *         max_retries?: int|Param, // Default: 3
+ *         servers?: list<array{ // Default: []
+ *             transport?: "stdio"|"http"|Param, // How the server is reached: as a child process (stdio) or over a remote HTTP endpoint (http).
+ *             command?: list<scalar|Param|null>,
+ *             cwd?: string|Param, // Working directory of the stdio child process. // Default: null
+ *             env?: list<scalar|Param|null>,
+ *             inherit_env?: bool|Param, // Merge "env" on top of the current process environment instead of replacing it. // Default: true
+ *             max_buffer_size?: int|Param, // Maximum bytes buffered while waiting for a newline. Defaults to the SDK value. // Default: null
+ *             url?: string|Param, // Endpoint URL of the remote MCP server. // Default: null
+ *             headers?: list<scalar|Param|null>,
+ *             http_client?: string|Param, // Service id of a PSR-18 HTTP client. Defaults to "psr18.http_client" when available. // Default: null
+ *             max_sse_buffer_bytes?: int|Param, // Maximum bytes buffered per SSE event. Defaults to the SDK value. // Default: null
+ *             init_timeout?: int|Param, // Overrides the client-level value. // Default: null
+ *             request_timeout?: int|Param, // Overrides the client-level value. // Default: null
+ *             max_retries?: int|Param, // Overrides the client-level value. // Default: null
+ *         }>,
+ *     }>,
+ * }
+ * @psalm-type MonologConfig = array{
+ *     use_microseconds?: scalar|Param|null, // Default: true
+ *     timezone?: string|Param, // The timezone used for the timestamp of every log record (e.g. "UTC" or "Europe/Paris"). Defaults to the PHP default timezone. // Default: null
+ *     channels?: list<scalar|Param|null>,
+ *     handlers?: array<string, array{ // Default: []
+ *         type?: scalar|Param|null,
+ *         id?: scalar|Param|null,
+ *         enabled?: bool|Param, // Default: true
+ *         priority?: scalar|Param|null, // Default: 0
+ *         level?: scalar|Param|null, // Default: "DEBUG"
+ *         bubble?: bool|Param, // Default: true
+ *         interactive_only?: bool|Param, // Default: false
+ *         app_name?: scalar|Param|null, // Default: null
+ *         include_stacktraces?: bool|Param, // Default: false
+ *         base_path?: scalar|Param|null, // Default: null
+ *         process_psr_3_messages?: array{
+ *             enabled?: bool|Param|null, // Default: null
+ *             date_format?: scalar|Param|null,
+ *             remove_used_context_fields?: bool|Param,
+ *             ...<string, mixed>
+ *         },
+ *         path?: scalar|Param|null, // Default: "%kernel.logs_dir%/%kernel.environment%.log"
+ *         file_permission?: scalar|Param|null, // Default: null
+ *         use_locking?: bool|Param, // Default: false
+ *         filename_format?: scalar|Param|null, // Default: "{filename}-{date}"
+ *         date_format?: scalar|Param|null, // Default: "Y-m-d"
+ *         ident?: scalar|Param|null, // Default: "php"
+ *         logopts?: scalar|Param|null, // Default: 1
+ *         facility?: scalar|Param|null, // Default: "user"
+ *         max_files?: scalar|Param|null, // Default: 0
+ *         action_level?: scalar|Param|null, // Default: "WARNING"
+ *         activation_strategy?: scalar|Param|null, // Default: null
+ *         stop_buffering?: bool|Param, // Default: true
+ *         passthru_level?: scalar|Param|null, // Default: null
+ *         excluded_http_codes?: list<array{ // Default: []
+ *             code?: scalar|Param|null,
+ *             urls?: list<scalar|Param|null>,
+ *         }>,
+ *         accepted_levels?: list<scalar|Param|null>,
+ *         min_level?: scalar|Param|null, // Default: "DEBUG"
+ *         max_level?: scalar|Param|null, // Default: "EMERGENCY"
+ *         buffer_size?: scalar|Param|null, // Default: 0
+ *         flush_on_overflow?: bool|Param, // Default: false
+ *         handler?: scalar|Param|null,
+ *         url?: scalar|Param|null,
+ *         exchange?: scalar|Param|null,
+ *         exchange_name?: scalar|Param|null, // Default: "log"
+ *         channel?: scalar|Param|null, // Default: null
+ *         bot_name?: scalar|Param|null, // Default: "Monolog"
+ *         use_attachment?: scalar|Param|null, // Default: true
+ *         use_short_attachment?: scalar|Param|null, // Default: false
+ *         include_extra?: scalar|Param|null, // Default: false
+ *         icon_emoji?: scalar|Param|null, // Default: null
+ *         webhook_url?: scalar|Param|null,
+ *         exclude_fields?: list<scalar|Param|null>,
+ *         token?: scalar|Param|null,
+ *         region?: scalar|Param|null,
+ *         source?: scalar|Param|null,
+ *         use_ssl?: bool|Param, // Default: true
+ *         user?: mixed,
+ *         title?: scalar|Param|null, // Default: null
+ *         host?: scalar|Param|null, // Default: null
+ *         port?: scalar|Param|null, // Default: 514
+ *         rfc?: scalar|Param|null, // Default: 1
+ *         config?: list<scalar|Param|null>,
+ *         members?: list<scalar|Param|null>,
+ *         connection_string?: scalar|Param|null,
+ *         timeout?: scalar|Param|null,
+ *         time?: scalar|Param|null, // Default: 60
+ *         deduplication_level?: scalar|Param|null, // Default: 400
+ *         store?: scalar|Param|null, // Default: null
+ *         connection_timeout?: scalar|Param|null,
+ *         persistent?: bool|Param,
+ *         message_type?: scalar|Param|null, // Default: 0
+ *         expand_newlines?: bool|Param, // Default: false
+ *         parse_mode?: scalar|Param|null, // Default: null
+ *         disable_webpage_preview?: bool|Param|null, // Default: null
+ *         disable_notification?: bool|Param|null, // Default: null
+ *         split_long_messages?: bool|Param, // Default: false
+ *         delay_between_messages?: bool|Param, // Default: false
+ *         topic?: int|Param, // Default: null
+ *         factor?: int|Param, // Default: 1
+ *         tags?: Param|string|list<scalar|Param|null>,
+ *         console_formatter_options?: mixed, // Default: []
+ *         formatter?: scalar|Param|null,
+ *         nested?: bool|Param, // Default: false
+ *         publisher?: Param|string|array{
+ *             id?: scalar|Param|null,
+ *             hostname?: scalar|Param|null,
+ *             port?: scalar|Param|null, // Default: 12201
+ *             chunk_size?: scalar|Param|null, // Default: 1420
+ *             encoder?: "json"|"compressed_json"|Param,
+ *         },
+ *         mongodb?: Param|string|array{
+ *             id?: scalar|Param|null, // ID of a MongoDB\Client service
+ *             uri?: scalar|Param|null,
+ *             username?: scalar|Param|null,
+ *             password?: scalar|Param|null,
+ *             database?: scalar|Param|null, // Default: "monolog"
+ *             collection?: scalar|Param|null, // Default: "logs"
+ *         },
+ *         elasticsearch?: Param|string|array{
+ *             id?: scalar|Param|null,
+ *             hosts?: list<scalar|Param|null>,
+ *             host?: scalar|Param|null,
+ *             port?: scalar|Param|null, // Default: 9200
+ *             transport?: scalar|Param|null, // Default: "Http"
+ *             user?: scalar|Param|null, // Default: null
+ *             password?: scalar|Param|null, // Default: null
+ *         },
+ *         index?: scalar|Param|null, // Default: "monolog"
+ *         document_type?: scalar|Param|null, // Default: "logs"
+ *         ignore_error?: scalar|Param|null, // Default: false
+ *         redis?: Param|string|array{
+ *             id?: scalar|Param|null,
+ *             host?: scalar|Param|null,
+ *             password?: scalar|Param|null, // Default: null
+ *             port?: scalar|Param|null, // Default: 6379
+ *             database?: scalar|Param|null, // Default: 0
+ *             key_name?: scalar|Param|null, // Default: "monolog_redis"
+ *         },
+ *         predis?: Param|string|array{ // Deprecated: The "predis" option is deprecated and ignored, use the "redis" option to configure the Predis client.
+ *             id?: scalar|Param|null,
+ *             host?: scalar|Param|null,
+ *         },
+ *         from_email?: scalar|Param|null,
+ *         to_email?: Param|string|list<scalar|Param|null>,
+ *         subject?: scalar|Param|null,
+ *         content_type?: scalar|Param|null, // Default: null
+ *         headers?: list<scalar|Param|null>,
+ *         parameters?: list<scalar|Param|null>,
+ *         mailer?: scalar|Param|null, // Default: null
+ *         email_prototype?: Param|string|array{
+ *             id?: scalar|Param|null,
+ *             method?: scalar|Param|null, // Default: null
+ *         },
+ *         verbosity_levels?: array{
+ *             VERBOSITY_QUIET?: scalar|Param|null, // Default: "ERROR"
+ *             VERBOSITY_NORMAL?: scalar|Param|null, // Default: "WARNING"
+ *             VERBOSITY_VERBOSE?: scalar|Param|null, // Default: "NOTICE"
+ *             VERBOSITY_VERY_VERBOSE?: scalar|Param|null, // Default: "INFO"
+ *             VERBOSITY_DEBUG?: scalar|Param|null, // Default: "DEBUG"
+ *         },
+ *         channels?: Param|string|array{
+ *             type?: scalar|Param|null,
+ *             elements?: list<scalar|Param|null>,
+ *             ...<string, mixed>
+ *         },
+ *     }>,
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -924,6 +1170,8 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     framework?: FrameworkConfig,
  *     doctrine?: DoctrineConfig,
  *     doctrine_migrations?: DoctrineMigrationsConfig,
+ *     mcp?: McpConfig,
+ *     monolog?: MonologConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -931,6 +1179,8 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         framework?: FrameworkConfig,
  *         doctrine?: DoctrineConfig,
  *         doctrine_migrations?: DoctrineMigrationsConfig,
+ *         mcp?: McpConfig,
+ *         monolog?: MonologConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -939,6 +1189,8 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         framework?: FrameworkConfig,
  *         doctrine?: DoctrineConfig,
  *         doctrine_migrations?: DoctrineMigrationsConfig,
+ *         mcp?: McpConfig,
+ *         monolog?: MonologConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -947,6 +1199,8 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         framework?: FrameworkConfig,
  *         doctrine?: DoctrineConfig,
  *         doctrine_migrations?: DoctrineMigrationsConfig,
+ *         mcp?: McpConfig,
+ *         monolog?: MonologConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

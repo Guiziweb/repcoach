@@ -8,5 +8,9 @@
 /vendor/
 ###< symfony/framework-bundle ###
 
-/.php-cs-fixer.cache
 /.phpunit.cache/
+
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###

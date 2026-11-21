@@ -11,6 +11,11 @@ doctrine:
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/Exercise'
                 prefix: 'App\Exercise'
+            Workout:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Workout'
+                prefix: 'App\Workout'
 
 when@prod:
     doctrine:

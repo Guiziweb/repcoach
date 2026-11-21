@@ -11,6 +11,7 @@ use App\Session\WorkoutSessionRepository;
 use App\Tests\ExerciseFixture;
 use App\Tests\Session\Kit;
 use App\Workout\WorkoutRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Mcp\Exception\ToolCallException;
@@ -184,6 +185,52 @@ final class HistoryToolsTest extends KernelTestCase
         $this->expectExceptionMessageIsOrContains('list_sessions');
 
         ($this->kit->showSession)(999);
+    }
+
+    public function testItCorrectsHowLongASessionLasted(): void
+    {
+        $done = $this->performed(seconds: 57);
+
+        $corrected = ($this->kit->updateSession)($done->id, startedAt: '2026-10-27T09:05:00+00:00', durationMinutes: 55);
+
+        self::assertSame(3300, $corrected->durationSeconds);
+    }
+
+    public function testMovingTheStartKeepsTheDuration(): void
+    {
+        $done = $this->performed(seconds: 1800);
+
+        $moved = ($this->kit->updateSession)($done->id, startedAt: '2026-10-26T18:00:00+00:00');
+
+        self::assertSame('2026-10-26T18:00:00+00:00', $moved->startedAt);
+        self::assertSame(1800, $moved->durationSeconds);
+    }
+
+    public function testAStartGivenInAnotherTimezoneKeepsTheSameInstant(): void
+    {
+        $done = $this->performed(seconds: 1800);
+
+        ($this->kit->updateSession)($done->id, startedAt: '2026-10-26T18:00:00+01:00');
+        $reloaded = ($this->kit->showSession)($done->id);
+
+        self::assertSame(
+            (new DateTimeImmutable('2026-10-26T18:00:00+01:00'))->getTimestamp(),
+            (new DateTimeImmutable($reloaded->startedAt))->getTimestamp(),
+        );
+        self::assertSame(1800, $reloaded->durationSeconds);
+    }
+
+    public function testSessionsStartingTogetherComeBackNewestFirst(): void
+    {
+        $first = $this->performed();
+        $this->clock->sleep(3600);
+        $second = $this->performed();
+        ($this->kit->updateSession)($first->id, startedAt: '2026-10-26T10:00:00+00:00');
+        ($this->kit->updateSession)($second->id, startedAt: '2026-10-26T10:00:00+00:00');
+
+        $listed = ($this->kit->listSessions)(limit: 1);
+
+        self::assertSame($second->id, $listed['sessions'][0]->id);
     }
 
     private function performed(int $seconds = 60): SessionSummary

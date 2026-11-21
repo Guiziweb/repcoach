@@ -463,6 +463,22 @@ final class SessionToolsTest extends KernelTestCase
         self::assertSame('Pecs', ($this->kit->start)('Pecs')->workout);
     }
 
+    public function testCorrectingTheDurationOfAPausedSessionExcludesThePause(): void
+    {
+        ($this->kit->start)('Pecs');
+        $this->clock->sleep(600);
+        ($this->kit->pause)();
+        $this->clock->sleep(600);
+        ($this->kit->resume)();
+        $this->clock->sleep(600);
+        $finished = ($this->kit->finish)();
+        $this->clock->sleep(3600);
+
+        $corrected = ($this->kit->updateSession)($finished->id, durationMinutes: 40);
+
+        self::assertSame(2400, $corrected->durationSeconds);
+    }
+
     private function workoutKit(WorkoutRepository $workouts): WorkoutKit
     {
         $exercises = self::getContainer()->get(ExerciseRepository::class);

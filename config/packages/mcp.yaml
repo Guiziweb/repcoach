@@ -2,7 +2,7 @@ mcp:
     servers:
         default:
             name: 'repcoach'
-            registry: ['App\Exercise\Mcp\']
+            registry: ['App\Workout\Mcp\', 'App\Exercise\Mcp\']
 
             session:
                 store: file

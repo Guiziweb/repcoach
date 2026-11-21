@@ -11,8 +11,12 @@ use App\Exercise\Enum\ExerciseCategory;
 use App\Exercise\Enum\ForceType;
 use App\Exercise\Enum\Mechanic;
 use App\Exercise\Exercise;
+use App\Session\PerformedSet;
+use App\Session\SessionExercise;
+use App\Session\WorkoutSession;
 use App\Workout\Workout;
 use App\Workout\WorkoutExercise;
+use DateTimeImmutable;
 
 final class ExerciseFixture
 {
@@ -57,5 +61,25 @@ final class ExerciseFixture
         new WorkoutExercise($workout, $exercise ?? self::exercise(), 1, sets: 4, reps: 8, weight: 60.0);
 
         return $workout;
+    }
+
+    public static function set(
+        WorkoutSession $session,
+        DateTimeImmutable $at,
+        ?int $reps = null,
+        ?int $seconds = null,
+        ?float $weight = null,
+    ): PerformedSet {
+        $planned = $session->getPlan()->first();
+
+        return new PerformedSet(
+            $session,
+            $planned instanceof SessionExercise ? $planned->exercise : self::exercise(),
+            $planned instanceof SessionExercise ? $planned : null,
+            $at,
+            $reps,
+            $seconds,
+            $weight,
+        );
     }
 }

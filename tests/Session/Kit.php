@@ -14,6 +14,7 @@ use App\Session\Action\StartSession;
 use App\Session\Mcp\AbortSessionTool;
 use App\Session\Mcp\CurrentSessionTool;
 use App\Session\Mcp\FinishSessionTool;
+use App\Session\Mcp\ListSessionsTool;
 use App\Session\Mcp\LogSetTool;
 use App\Session\Mcp\PauseSessionTool;
 use App\Session\Mcp\ResumeSessionTool;
@@ -41,6 +42,8 @@ final readonly class Kit
 
     public FinishSessionTool $finish;
 
+    public ListSessionsTool $listSessions;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         WorkoutSessionRepository $sessions,
@@ -58,5 +61,6 @@ final readonly class Kit
         $this->resume = new ResumeSessionTool(new ResumeSession($entityManager, $sessions, $clock, $workflow), $clock);
         $this->abort = new AbortSessionTool(new AbortSession($entityManager, $sessions, $clock, $workflow), $clock);
         $this->finish = new FinishSessionTool(new FinishSession($entityManager, $sessions, $clock, $workflow, $check), $clock);
+        $this->listSessions = new ListSessionsTool($sessions, $check, $clock);
     }
 }

@@ -6,8 +6,10 @@ namespace App\Tests\Session\Mcp;
 
 use App\Exercise\ExerciseRepository;
 use App\Session\WorkoutSessionRepository;
+use App\Shared\Limits;
 use App\Tests\ExerciseFixture;
 use App\Tests\Session\Kit;
+use App\Tests\Workout\Kit as WorkoutKit;
 use App\Workout\WorkoutRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -17,6 +19,8 @@ use Symfony\Component\Clock\MockClock;
 
 final class SessionToolsTest extends KernelTestCase
 {
+    private MockClock $clock;
+
     private Kit $kit;
 
     private EntityManagerInterface $entityManager;
@@ -49,7 +53,8 @@ final class SessionToolsTest extends KernelTestCase
         $exercises = self::getContainer()->get(ExerciseRepository::class);
         self::assertInstanceOf(ExerciseRepository::class, $exercises);
 
-        $this->kit = new Kit($entityManager, $sessions, $workouts, $exercises, new MockClock('2026-10-27 10:00:00'));
+        $this->clock = new MockClock('2026-10-27 10:00:00');
+        $this->kit = new Kit($entityManager, $sessions, $workouts, $exercises, $this->clock);
     }
 
     public function testItStartsASession(): void
@@ -226,6 +231,95 @@ final class SessionToolsTest extends KernelTestCase
         $this->expectExceptionMessageIsOrContains('no line at position 4');
 
         ($this->kit->logSet)(position: 4);
+    }
+
+    public function testItRefusesASetBeyondTheLimitsAndRecordsNothing(): void
+    {
+        ($this->kit->start)('Pecs');
+
+        try {
+            ($this->kit->logSet)(position: 1, reps: Limits::MAX_REPS + 1, weight: 60.0);
+            self::fail('Too many repetitions should be refused.');
+        } catch (ToolCallException) {
+        }
+
+        self::assertSame([], ($this->kit->current)()->sets);
+    }
+
+    public function testItRefusesALiftOutsideThePlanWithoutItsWeight(): void
+    {
+        ($this->kit->start)('Pecs');
+
+        try {
+            ($this->kit->logSet)(exercise: 'bench-press', reps: 8);
+            self::fail('A lift without its weight should be refused.');
+        } catch (ToolCallException $refused) {
+            self::assertStringContainsString('Give the weight', $refused->getMessage());
+        }
+
+        self::assertSame([], ($this->kit->current)()->sets);
+    }
+
+    public function testItRefusesAnExerciseThatIsNotTheOneOfThePosition(): void
+    {
+        ($this->kit->start)('Pecs');
+
+        try {
+            ($this->kit->logSet)(position: 1, exercise: 'plank', reps: 8);
+            self::fail('A mismatching exercise should be refused.');
+        } catch (ToolCallException $refused) {
+            self::assertStringContainsString('not "plank"', $refused->getMessage());
+        }
+
+        self::assertSame([], ($this->kit->current)()->sets);
+    }
+
+    public function testTheCurrentSessionShowsWhatWasLogged(): void
+    {
+        ($this->kit->start)('Pecs');
+        $this->clock->sleep(120);
+        ($this->kit->logSet)(position: 1, reps: 8, weight: 60.0);
+        $this->clock->sleep(90);
+
+        $summary = ($this->kit->current)();
+
+        self::assertSame(210, $summary->durationSeconds);
+        $sets = $summary->sets;
+        self::assertCount(1, $sets);
+        self::assertSame('Barbell Bench Press', $sets[0]->exercise);
+    }
+
+    public function testASessionKeepsThePlanItStartedWith(): void
+    {
+        ($this->kit->start)('Pecs');
+
+        $workouts = self::getContainer()->get(WorkoutRepository::class);
+        self::assertInstanceOf(WorkoutRepository::class, $workouts);
+
+        ($this->workoutKit($workouts)->removeExercise)('Pecs', position: 1);
+
+        $summary = ($this->kit->current)();
+
+        self::assertCount(1, $summary->planned);
+        self::assertSame('Barbell Bench Press', $summary->planned[0]->exercise);
+    }
+
+    public function testWithoutASessionItReportsAnEmptyStateRatherThanFailing(): void
+    {
+        $summary = ($this->kit->current)();
+
+        self::assertSame('none', $summary->status);
+        self::assertSame('', $summary->workout);
+        self::assertSame([], $summary->planned);
+        self::assertSame([], $summary->sets);
+    }
+
+    private function workoutKit(WorkoutRepository $workouts): WorkoutKit
+    {
+        $exercises = self::getContainer()->get(ExerciseRepository::class);
+        self::assertInstanceOf(ExerciseRepository::class, $exercises);
+
+        return new WorkoutKit($this->entityManager, $workouts, $exercises);
     }
 
     protected function tearDown(): void

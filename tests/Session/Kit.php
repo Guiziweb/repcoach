@@ -7,6 +7,7 @@ namespace App\Tests\Session;
 use App\Exercise\ExerciseRepository;
 use App\Session\Action\LogSet;
 use App\Session\Action\StartSession;
+use App\Session\Mcp\CurrentSessionTool;
 use App\Session\Mcp\LogSetTool;
 use App\Session\Mcp\StartSessionTool;
 use App\Session\WorkoutSessionRepository;
@@ -21,6 +22,8 @@ final readonly class Kit
 
     public LogSetTool $logSet;
 
+    public CurrentSessionTool $current;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         WorkoutSessionRepository $sessions,
@@ -32,5 +35,6 @@ final readonly class Kit
 
         $this->start = new StartSessionTool(new StartSession($entityManager, $sessions, $workouts, $clock), $clock);
         $this->logSet = new LogSetTool(new LogSet($entityManager, $sessions, $exercises, $clock, $check), $clock);
+        $this->current = new CurrentSessionTool($sessions, $clock);
     }
 }

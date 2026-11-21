@@ -30,6 +30,7 @@ make migrate   run the database migrations
 make cs        check code style
 make cs-fix    fix code style
 make stan      PHPStan, level max
+make test      PHPUnit
 ```
 
 ## Commits

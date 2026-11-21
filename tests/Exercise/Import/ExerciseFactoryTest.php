@@ -69,16 +69,6 @@ final class ExerciseFactoryTest extends TestCase
         (new ExerciseFactory())->fromRepDb([...$this->row(), 'equipment' => 'jetpack']);
     }
 
-    public function testItKeepsTheNestedImageStructure(): void
-    {
-        $exercise = (new ExerciseFactory())->fromRepDb($this->row());
-
-        self::assertSame(
-            ['flat' => ['start' => 'images/flat/bench-press-start.webp', 'peak' => 'images/flat/bench-press-peak.webp']],
-            $exercise->images,
-        );
-    }
-
     public function testItDropsValuesOfTheWrongType(): void
     {
         $exercise = (new ExerciseFactory())->fromRepDb([

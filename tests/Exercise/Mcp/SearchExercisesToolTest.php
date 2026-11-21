@@ -74,7 +74,6 @@ final class SearchExercisesToolTest extends KernelTestCase
             instructions: [],
             tags: [],
             goals: [],
-            images: [],
             bodyweight: false,
             unilateral: false,
             met: 5.0,

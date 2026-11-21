@@ -47,7 +47,6 @@ final class ExerciseFactory
             instructions: $this->strings($row, 'instructions_en'),
             tags: $this->strings($row, 'tags'),
             goals: $this->strings($row, 'goals'),
-            images: $this->images($row),
             bodyweight: (bool) ($row['is_bodyweight'] ?? false),
             unilateral: (bool) ($row['is_unilateral'] ?? false),
             met: $this->number($row, 'met'),
@@ -111,34 +110,5 @@ final class ExerciseFactory
         }
 
         return array_values(array_filter($values, \is_string(...)));
-    }
-
-    /**
-     * @param array<mixed, mixed> $row
-     *
-     * @return array<string, array<string, string>>
-     */
-    private function images(array $row): array
-    {
-        $images = $row['images'] ?? [];
-        $mapped = [];
-
-        if (!\is_array($images)) {
-            return [];
-        }
-
-        foreach ($images as $style => $variants) {
-            if (!\is_string($style) || !\is_array($variants)) {
-                continue;
-            }
-
-            foreach ($variants as $variant => $path) {
-                if (\is_string($variant) && \is_string($path)) {
-                    $mapped[$style][$variant] = $path;
-                }
-            }
-        }
-
-        return $mapped;
     }
 }

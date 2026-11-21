@@ -17,12 +17,11 @@ use Doctrine\ORM\Mapping as ORM;
 class Exercise
 {
     /**
-     * @param list<string>                         $primaryMuscles
-     * @param list<string>                         $secondaryMuscles
-     * @param list<string>                         $instructions
-     * @param list<string>                         $tags
-     * @param list<string>                         $goals
-     * @param array<string, array<string, string>> $images
+     * @param list<string> $primaryMuscles
+     * @param list<string> $secondaryMuscles
+     * @param list<string> $instructions
+     * @param list<string> $tags
+     * @param list<string> $goals
      */
     public function __construct(
         #[ORM\Id]
@@ -52,8 +51,6 @@ class Exercise
         public array $tags,
         #[ORM\Column(type: Types::JSON)]
         public array $goals,
-        #[ORM\Column(type: Types::JSON)]
-        public array $images,
         #[ORM\Column]
         public bool $bodyweight,
         #[ORM\Column]
@@ -84,7 +81,6 @@ class Exercise
         $this->instructions = $fresh->instructions;
         $this->tags = $fresh->tags;
         $this->goals = $fresh->goals;
-        $this->images = $fresh->images;
         $this->bodyweight = $fresh->bodyweight;
         $this->unilateral = $fresh->unilateral;
         $this->met = $fresh->met;

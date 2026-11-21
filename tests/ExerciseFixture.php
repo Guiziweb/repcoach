@@ -47,7 +47,6 @@ final class ExerciseFixture
             instructions: ['Do it.'],
             tags: $tags,
             goals: [],
-            images: [],
             bodyweight: $bodyweight,
             unilateral: false,
             met: 6.0,

@@ -7,4 +7,4 @@ services:
         resource: '../src/'
         exclude:
             - '../src/Kernel.php'
-            - '../src/Shared/{NotFound,Reason,Refused}.php'
+            - '../src/Shared/{Limits,NotFound,Reason,Refused}.php'

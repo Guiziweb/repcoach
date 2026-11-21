@@ -5,6 +5,7 @@
 ![Symfony 8.1](https://img.shields.io/badge/Symfony-8.1-000000?logo=symfony&logoColor=white)
 ![PHPStan max](https://img.shields.io/badge/PHPStan-level%20max-brightgreen)
 ![MCP](https://img.shields.io/badge/MCP-server-blueviolet)
+![License MIT](https://img.shields.io/badge/license-MIT-blue)
 
 An MCP server to log gym workouts from your AI assistant. You tell it what you did, it calls the tools, and the server keeps the numbers. Symfony, SQLite, no front end.
 
@@ -154,3 +155,7 @@ The code is split by domain (`Exercise`, `Workout`, `Session`, `Shared`), with o
 Exercise data by [RepDB](https://repdb.co). It is downloaded when you run `make import` and is not part of this repository.
 
 Built with [Symfony](https://symfony.com), the [MCP bundle](https://github.com/symfony/ai) and the [MCP PHP SDK](https://github.com/modelcontextprotocol/php-sdk).
+
+## Licence
+
+MIT, see [LICENSE](LICENSE).

@@ -1,4 +1,4 @@
-.PHONY: install migrate cs cs-fix stan
+.PHONY: install migrate cs cs-fix stan test
 
 install:
 	composer install
@@ -15,3 +15,6 @@ cs-fix:
 stan:
 	php bin/console cache:warmup --env=dev --quiet
 	vendor/bin/phpstan analyse --no-progress
+
+test:
+	vendor/bin/phpunit

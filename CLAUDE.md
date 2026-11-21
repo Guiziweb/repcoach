@@ -27,6 +27,7 @@ Always use the Makefile, never the underlying tools directly.
 ```
 make install   composer install
 make migrate   run the database migrations
+make import    load the exercise catalogue from RepDB
 make cs        check code style
 make cs-fix    fix code style
 make lint      Symfony checks: YAML syntax, container wiring, Doctrine mapping

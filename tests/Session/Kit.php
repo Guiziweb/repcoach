@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Tests\Session;
 
 use App\Exercise\ExerciseRepository;
+use App\Session\Action\FinishSession;
 use App\Session\Action\LogSet;
 use App\Session\Action\PauseSession;
 use App\Session\Action\ResumeSession;
 use App\Session\Action\StartSession;
 use App\Session\Mcp\CurrentSessionTool;
+use App\Session\Mcp\FinishSessionTool;
 use App\Session\Mcp\LogSetTool;
 use App\Session\Mcp\PauseSessionTool;
 use App\Session\Mcp\ResumeSessionTool;
@@ -33,6 +35,8 @@ final readonly class Kit
 
     public ResumeSessionTool $resume;
 
+    public FinishSessionTool $finish;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         WorkoutSessionRepository $sessions,
@@ -48,5 +52,6 @@ final readonly class Kit
         $this->current = new CurrentSessionTool($sessions, $clock);
         $this->pause = new PauseSessionTool(new PauseSession($entityManager, $sessions, $clock, $workflow), $clock);
         $this->resume = new ResumeSessionTool(new ResumeSession($entityManager, $sessions, $clock, $workflow), $clock);
+        $this->finish = new FinishSessionTool(new FinishSession($entityManager, $sessions, $clock, $workflow, $check), $clock);
     }
 }

@@ -20,3 +20,261 @@ parameters:
             - { exercise: leg-curl, sets: 3, reps: 12, weight: 35 }
             - { exercise: standing-calf-raise, sets: 4, reps: 15, weight: 60 }
             - { exercise: plank, sets: 3, seconds: 45 }
+
+    app.sessions:
+        - program: Push
+          daysAgo: 54
+          at: '18:00'
+          minutes: 50
+          done:
+              bench-press: { weight: 52.5, reps: 8 }
+              incline-db-press: { weight: 20, reps: 10 }
+              ohp: { weight: 35, reps: 8 }
+              lateral-raise: { weight: 7, reps: 12 }
+              tricep-pushdown: { weight: 22.5, reps: 12 }
+        - program: Pull
+          daysAgo: 52
+          at: '18:00'
+          minutes: 57
+          done:
+              pull-up: { reps: 6 }
+              barbell-row: { weight: 52.5, reps: 8 }
+              lat-pulldown: { weight: 45, reps: 10 }
+              seated-cable-row: { weight: 40, reps: 12 }
+              face-pull: { weight: 17.5, reps: 15 }
+              barbell-curl: { weight: 27.5, reps: 10 }
+        - program: Legs
+          daysAgo: 50
+          at: '18:00'
+          minutes: 64
+          done:
+              squat: { weight: 72.5, reps: 6 }
+              romanian-deadlift: { weight: 62.5, reps: 8 }
+              leg-press: { weight: 107.5, reps: 12 }
+              leg-curl: { weight: 32.5, reps: 12 }
+              standing-calf-raise: { weight: 52.5, reps: 15 }
+              plank: { seconds: 45 }
+        - program: Push
+          daysAgo: 47
+          at: '18:00'
+          minutes: 55
+          done:
+              bench-press: { weight: 55, reps: 8 }
+              incline-db-press: { weight: 20, reps: 10 }
+              ohp: { weight: 37.5, reps: 8 }
+              lateral-raise: { weight: 7, reps: 12 }
+              tricep-pushdown: { weight: 22.5, reps: 12 }
+        - program: Pull
+          daysAgo: 45
+          at: '18:00'
+          minutes: 62
+          done:
+              pull-up: { reps: 7 }
+              barbell-row: { weight: 55, reps: 8 }
+              lat-pulldown: { weight: 45, reps: 10 }
+              seated-cable-row: { weight: 40, reps: 12 }
+              face-pull: { weight: 17.5, reps: 15 }
+              barbell-curl: { weight: 27.5, reps: 10 }
+        - program: Legs
+          daysAgo: 43
+          at: '18:00'
+          minutes: 53
+          done:
+              squat: { weight: 72.5, reps: 6 }
+              romanian-deadlift: { weight: 62.5, reps: 8 }
+              leg-press: { weight: 110, reps: 12 }
+              leg-curl: { weight: 32.5, reps: 12 }
+              standing-calf-raise: { weight: 55, reps: 15 }
+              plank: { seconds: 45 }
+        - program: Push
+          daysAgo: 40
+          at: '18:00'
+          minutes: 60
+          done:
+              bench-press: { weight: 55, reps: 8 }
+              incline-db-press: { weight: 20, reps: 10 }
+              ohp: { weight: 37.5, reps: 8 }
+              lateral-raise: { weight: 7, reps: 12 }
+              tricep-pushdown: { weight: 22.5, reps: 12 }
+        - program: Pull
+          daysAgo: 38
+          at: '18:00'
+          minutes: 51
+          done:
+              pull-up: { reps: 7 }
+              barbell-row: { weight: 55, reps: 8 }
+              lat-pulldown: { weight: 45, reps: 10 }
+              seated-cable-row: { weight: 42.5, reps: 12 }
+              face-pull: { weight: 17.5, reps: 15 }
+              barbell-curl: { weight: 27.5, reps: 10 }
+        - program: Legs
+          daysAgo: 36
+          at: '18:00'
+          minutes: 58
+          done:
+              squat: { weight: 75, reps: 6 }
+              romanian-deadlift: { weight: 65, reps: 8 }
+              leg-press: { weight: 110, reps: 12 }
+              leg-curl: { weight: 32.5, reps: 12 }
+              standing-calf-raise: { weight: 55, reps: 15 }
+              plank: { seconds: 45 }
+        - program: Push
+          daysAgo: 33
+          at: '18:00'
+          minutes: 65
+          done:
+              bench-press: { weight: 57.5, reps: 8 }
+              incline-db-press: { weight: 20, reps: 10 }
+              ohp: { weight: 37.5, reps: 8 }
+              lateral-raise: { weight: 8, reps: 12 }
+              tricep-pushdown: { weight: 22.5, reps: 12 }
+        - program: Pull
+          daysAgo: 31
+          at: '18:00'
+          minutes: 56
+          done:
+              pull-up: { reps: 8 }
+              barbell-row: { weight: 57.5, reps: 8 }
+              lat-pulldown: { weight: 47.5, reps: 10 }
+              seated-cable-row: { weight: 42.5, reps: 12 }
+              face-pull: { weight: 20, reps: 15 }
+              barbell-curl: { weight: 27.5, reps: 10 }
+        - program: Legs
+          daysAgo: 29
+          at: '18:00'
+          minutes: 63
+          done:
+              squat: { weight: 75, reps: 6 }
+              romanian-deadlift: { weight: 65, reps: 8 }
+              leg-press: { weight: 112.5, reps: 12 }
+              leg-curl: { weight: 32.5, reps: 12 }
+              standing-calf-raise: { weight: 57.5, reps: 15 }
+              plank: { seconds: 45 }
+        - program: Push
+          daysAgo: 26
+          at: '18:00'
+          minutes: 54
+          done:
+              bench-press: { weight: 57.5, reps: 8 }
+              incline-db-press: { weight: 20, reps: 10 }
+              ohp: { weight: 37.5, reps: 8 }
+              lateral-raise: { weight: 8, reps: 12 }
+              tricep-pushdown: { weight: 25, reps: 12 }
+        - program: Pull
+          daysAgo: 24
+          at: '18:00'
+          minutes: 61
+          done:
+              pull-up: { reps: 8 }
+              barbell-row: { weight: 57.5, reps: 8 }
+              lat-pulldown: { weight: 47.5, reps: 10 }
+              seated-cable-row: { weight: 42.5, reps: 12 }
+              face-pull: { weight: 20, reps: 15 }
+              barbell-curl: { weight: 27.5, reps: 10 }
+        - program: Legs
+          daysAgo: 22
+          at: '18:00'
+          minutes: 52
+          done:
+              squat: { weight: 77.5, reps: 6 }
+              romanian-deadlift: { weight: 67.5, reps: 8 }
+              leg-press: { weight: 115, reps: 12 }
+              leg-curl: { weight: 32.5, reps: 12 }
+              standing-calf-raise: { weight: 57.5, reps: 15 }
+              plank: { seconds: 45 }
+        - program: Push
+          daysAgo: 19
+          at: '18:00'
+          minutes: 59
+          done:
+              bench-press: { weight: 57.5, reps: 8 }
+              incline-db-press: { weight: 22.5, reps: 10 }
+              ohp: { weight: 40, reps: 8 }
+              lateral-raise: { weight: 8, reps: 12 }
+              tricep-pushdown: { weight: 25, reps: 12 }
+        - program: Pull
+          daysAgo: 17
+          at: '18:00'
+          minutes: 50
+          done:
+              pull-up: { reps: 9 }
+              barbell-row: { weight: 57.5, reps: 8 }
+              lat-pulldown: { weight: 47.5, reps: 10 }
+              seated-cable-row: { weight: 42.5, reps: 12 }
+              face-pull: { weight: 20, reps: 15 }
+              barbell-curl: { weight: 30, reps: 10 }
+        - program: Legs
+          daysAgo: 15
+          at: '18:00'
+          minutes: 57
+          done:
+              squat: { weight: 77.5, reps: 6 }
+              romanian-deadlift: { weight: 67.5, reps: 8 }
+              leg-press: { weight: 117.5, reps: 12 }
+              leg-curl: { weight: 35, reps: 12 }
+              standing-calf-raise: { weight: 57.5, reps: 15 }
+              plank: { seconds: 45 }
+        - program: Push
+          daysAgo: 12
+          at: '18:00'
+          minutes: 64
+          done:
+              bench-press: { weight: 60, reps: 8 }
+              incline-db-press: { weight: 22.5, reps: 10 }
+              ohp: { weight: 40, reps: 8 }
+              lateral-raise: { weight: 8, reps: 12 }
+              tricep-pushdown: { weight: 25, reps: 12 }
+        - program: Pull
+          daysAgo: 10
+          at: '18:00'
+          minutes: 55
+          done:
+              pull-up: { reps: 9 }
+              barbell-row: { weight: 60, reps: 8 }
+              lat-pulldown: { weight: 50, reps: 10 }
+              seated-cable-row: { weight: 45, reps: 12 }
+              face-pull: { weight: 20, reps: 15 }
+              barbell-curl: { weight: 30, reps: 10 }
+        - program: Legs
+          daysAgo: 8
+          at: '18:00'
+          minutes: 62
+          done:
+              squat: { weight: 80, reps: 6 }
+              romanian-deadlift: { weight: 70, reps: 8 }
+              leg-press: { weight: 117.5, reps: 12 }
+              leg-curl: { weight: 35, reps: 12 }
+              standing-calf-raise: { weight: 60, reps: 15 }
+              plank: { seconds: 45 }
+        - program: Push
+          daysAgo: 5
+          at: '18:00'
+          minutes: 53
+          done:
+              bench-press: { weight: 60, reps: 8 }
+              incline-db-press: { weight: 22.5, reps: 10 }
+              ohp: { weight: 40, reps: 8 }
+              lateral-raise: { weight: 8, reps: 12 }
+              tricep-pushdown: { weight: 25, reps: 12 }
+        - program: Pull
+          daysAgo: 3
+          at: '18:00'
+          minutes: 60
+          done:
+              pull-up: { reps: 10 }
+              barbell-row: { weight: 60, reps: 8 }
+              lat-pulldown: { weight: 50, reps: 10 }
+              seated-cable-row: { weight: 45, reps: 12 }
+              face-pull: { weight: 20, reps: 15 }
+              barbell-curl: { weight: 30, reps: 10 }
+        - program: Legs
+          daysAgo: 1
+          at: '18:00'
+          minutes: 51
+          done:
+              squat: { weight: 80, reps: 6 }
+              romanian-deadlift: { weight: 70, reps: 8 }
+              leg-press: { weight: 120, reps: 12 }
+              leg-curl: { weight: 35, reps: 12 }
+              standing-calf-raise: { weight: 60, reps: 15 }
+              plank: { seconds: 45 }

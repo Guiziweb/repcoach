@@ -1,3 +1,6 @@
+parameters:
+    app.repdb_url: 'https://raw.githubusercontent.com/RepDB/exercise-dataset/free-701-2026-11/exercises.json'
+
 services:
     _defaults:
         autowire: true
@@ -9,5 +12,5 @@ services:
             - '../src/Kernel.php'
             - '../src/Exercise/Enum/'
             - '../src/Exercise/Exercise.php'
-            - '../src/Exercise/Import/InvalidExerciseRow.php'
+            - '../src/Exercise/Import/{DatasetUnavailable,InvalidExerciseRow}.php'
             - '../src/Shared/{Effort,ExerciseEffort,PlannedEffort,Limits,Minutes,NotFound,Reason,Refused}.php'

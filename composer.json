@@ -4,6 +4,9 @@
     "prefer-stable": true,
     "require": {
         "php": ">=8.4",
+        "doctrine/doctrine-bundle": "^3.3",
+        "doctrine/doctrine-migrations-bundle": "^4.0",
+        "doctrine/orm": "^3.7",
         "symfony/console": "8.1.*",
         "symfony/flex": "^2.12",
         "symfony/framework-bundle": "8.1.*",
@@ -27,5 +30,8 @@
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         }
+    },
+    "require-dev": {
+        "symfony/dotenv": "8.1.*"
     }
 }

@@ -1,3 +1,6 @@
+imports:
+    - { resource: ../fixtures/workouts.yaml }
+
 parameters:
     app.repdb_url: 'https://raw.githubusercontent.com/RepDB/exercise-dataset/free-701-2026-11/exercises.json'
 

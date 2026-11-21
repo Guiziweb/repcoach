@@ -375,6 +375,85 @@ final class SessionToolsTest extends KernelTestCase
         self::assertSame(600, $resumed->durationSeconds);
     }
 
+    public function testItKeepsTheSessionOpenWhenTheDurationIsImpossible(): void
+    {
+        ($this->kit->start)('Pecs');
+
+        try {
+            ($this->kit->finish)(Limits::MAX_MINUTES + 1);
+            self::fail('An impossible duration should be refused.');
+        } catch (ToolCallException) {
+        }
+
+        self::assertSame('running', ($this->kit->current)()->status);
+    }
+
+    public function testTheServerStampsTheTimeNotTheModel(): void
+    {
+        ($this->kit->start)('Pecs');
+        $this->clock->sleep(2700);
+        $summary = ($this->kit->finish)();
+
+        self::assertSame(2700, $summary->durationSeconds);
+    }
+
+    public function testTheGivenDurationOfAPausedSessionExcludesThePause(): void
+    {
+        ($this->kit->start)('Pecs');
+        $this->clock->sleep(600);
+        ($this->kit->pause)();
+        $this->clock->sleep(600);
+        ($this->kit->resume)();
+
+        $finished = ($this->kit->finish)(durationMinutes: 30);
+
+        self::assertSame(1800, $finished->durationSeconds);
+    }
+
+    public function testAWorkoutWithoutExercisesStartsAndFinishesEmpty(): void
+    {
+        $workouts = self::getContainer()->get(WorkoutRepository::class);
+        self::assertInstanceOf(WorkoutRepository::class, $workouts);
+        ($this->workoutKit($workouts)->createWorkout)('Vide');
+
+        $started = ($this->kit->start)('Vide');
+        $finished = ($this->kit->finish)();
+
+        self::assertSame([], $started->planned);
+        self::assertSame([], $finished->sets);
+        self::assertSame(0.0, $finished->volume);
+        self::assertSame('finished', $finished->status);
+    }
+
+    public function testASessionEnteredAfterTheFactTakesTheDurationItWasGiven(): void
+    {
+        ($this->kit->start)('Pecs');
+        $this->clock->sleep(60);
+
+        $summary = ($this->kit->finish)(durationMinutes: 55);
+
+        self::assertSame(3300, $summary->durationSeconds);
+    }
+
+    public function testFinishingTwiceIsRefused(): void
+    {
+        ($this->kit->start)('Pecs');
+        ($this->kit->finish)();
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('No session is open');
+
+        ($this->kit->finish)();
+    }
+
+    public function testTheEmptyStateIsAlsoWhatItReportsOnceFinished(): void
+    {
+        ($this->kit->start)('Pecs');
+        ($this->kit->finish)();
+
+        self::assertSame('none', ($this->kit->current)()->status);
+    }
+
     private function workoutKit(WorkoutRepository $workouts): WorkoutKit
     {
         $exercises = self::getContainer()->get(ExerciseRepository::class);

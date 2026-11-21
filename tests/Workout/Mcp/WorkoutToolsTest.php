@@ -174,6 +174,49 @@ final class WorkoutToolsTest extends KernelTestCase
         ($this->kit->planExercise)('Pecs', 'bench-press', sets: 4);
     }
 
+    public function testItRewritesALineInPlace(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+        ($this->kit->planExercise)('Pecs', 'bench-press', sets: 4, reps: 8, weight: 60.0);
+        ($this->kit->planExercise)('Pecs', 'plank', sets: 3, seconds: 45);
+
+        $workout = ($this->kit->changeExercise)('Pecs', position: 1, sets: 5, reps: 5, weight: 70.0);
+
+        $line = $workout->exercises[0];
+        self::assertSame('Barbell Bench Press', $line->exercise);
+        self::assertSame(1, $line->position);
+        self::assertSame(5, $line->sets);
+        self::assertSame(70.0, $line->weight);
+        self::assertSame('Plank', $workout->exercises[1]->exercise);
+    }
+
+    public function testItRefusesAChangeThatBreaksTheLine(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+        ($this->kit->planExercise)('Pecs', 'bench-press', sets: 4, reps: 8, weight: 60.0);
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('repetitions or a duration, not both');
+
+        ($this->kit->changeExercise)('Pecs', position: 1, sets: 4, reps: 8, seconds: 45);
+    }
+
+    public function testARefusedChangeLeavesTheLineUntouched(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+        ($this->kit->planExercise)('Pecs', 'bench-press', sets: 4, reps: 8, weight: 60.0);
+
+        try {
+            ($this->kit->changeExercise)('Pecs', position: 1, sets: Limits::MAX_SETS + 1, reps: 8);
+            self::fail('Too many sets should be refused.');
+        } catch (ToolCallException) {
+        }
+
+        $line = ($this->kit->showWorkout)('Pecs')->exercises[0];
+        self::assertSame(4, $line->sets);
+        self::assertSame(60.0, $line->weight);
+    }
+
     protected function tearDown(): void
     {
         $this->entityManager->clear();

@@ -8,12 +8,14 @@ use App\Exercise\ExerciseRepository;
 use App\Tests\Checker;
 use App\Workout\Action\ChangeExercise;
 use App\Workout\Action\CreateWorkout;
+use App\Workout\Action\DuplicateWorkout;
 use App\Workout\Action\MoveExercise;
 use App\Workout\Action\PlanExercise;
 use App\Workout\Action\RemoveExercise;
 use App\Workout\Action\RenameWorkout;
 use App\Workout\Mcp\ChangeExerciseTool;
 use App\Workout\Mcp\CreateWorkoutTool;
+use App\Workout\Mcp\DuplicateWorkoutTool;
 use App\Workout\Mcp\ListWorkoutsTool;
 use App\Workout\Mcp\MoveExerciseTool;
 use App\Workout\Mcp\PlanExerciseTool;
@@ -42,6 +44,8 @@ final readonly class Kit
 
     public RenameWorkoutTool $renameWorkout;
 
+    public DuplicateWorkoutTool $duplicateWorkout;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         WorkoutRepository $workouts,
@@ -58,5 +62,6 @@ final readonly class Kit
         $this->removeExercise = new RemoveExerciseTool(new RemoveExercise($entityManager, $workouts));
         $this->moveExercise = new MoveExerciseTool(new MoveExercise($entityManager, $workouts));
         $this->renameWorkout = new RenameWorkoutTool(new RenameWorkout($entityManager, $workouts, $names));
+        $this->duplicateWorkout = new DuplicateWorkoutTool(new DuplicateWorkout($entityManager, $workouts, $names), $workouts);
     }
 }

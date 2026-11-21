@@ -32,6 +32,7 @@ make cs-fix    fix code style
 make lint      Symfony checks: YAML syntax, container wiring, Doctrine mapping
 make stan      PHPStan, level max
 make test      PHPUnit
+make ci        cs + lint + stan + test, what CI runs
 ```
 
 ## Commits
@@ -82,3 +83,7 @@ A comment or a docblock is allowed only for a reason the code cannot show
 Every change ships with the tests that cover it.
 
 Tests never use the network: HTTP is mocked.
+
+## CI
+
+Every push and every pull request runs `make ci`. It must pass.

@@ -6,8 +6,10 @@ namespace App\Tests\Workout;
 
 use App\Exercise\ExerciseRepository;
 use App\Tests\Checker;
+use App\Workout\Action\ChangeExercise;
 use App\Workout\Action\CreateWorkout;
 use App\Workout\Action\PlanExercise;
+use App\Workout\Mcp\ChangeExerciseTool;
 use App\Workout\Mcp\CreateWorkoutTool;
 use App\Workout\Mcp\ListWorkoutsTool;
 use App\Workout\Mcp\PlanExerciseTool;
@@ -26,6 +28,8 @@ final readonly class Kit
 
     public PlanExerciseTool $planExercise;
 
+    public ChangeExerciseTool $changeExercise;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         WorkoutRepository $workouts,
@@ -38,5 +42,6 @@ final readonly class Kit
         $this->showWorkout = new ShowWorkoutTool($workouts);
         $this->createWorkout = new CreateWorkoutTool(new CreateWorkout($entityManager, $names));
         $this->planExercise = new PlanExerciseTool(new PlanExercise($entityManager, $workouts, $exercises, $check));
+        $this->changeExercise = new ChangeExerciseTool(new ChangeExercise($entityManager, $workouts, $check));
     }
 }

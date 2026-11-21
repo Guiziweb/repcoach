@@ -180,6 +180,54 @@ final class SessionToolsTest extends KernelTestCase
         self::assertSame(0, $summary->planned[0]->done);
     }
 
+    public function testItRefusesASetOutsideThePlanWithBothRepsAndSeconds(): void
+    {
+        ($this->kit->start)('Pecs');
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('not both');
+
+        ($this->kit->logSet)(exercise: 'plank', reps: 8, seconds: 45);
+    }
+
+    public function testItRefusesAnUnknownExercise(): void
+    {
+        ($this->kit->start)('Pecs');
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('search_exercises');
+
+        ($this->kit->logSet)(exercise: 'does-not-exist', reps: 8);
+    }
+
+    public function testItRefusesToLogWithoutASession(): void
+    {
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('No session is open');
+
+        ($this->kit->logSet)(position: 1, reps: 8);
+    }
+
+    public function testItRefusesASetWithNeitherRepsNorSeconds(): void
+    {
+        ($this->kit->start)('Pecs');
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('either repetitions or a duration');
+
+        ($this->kit->logSet)(exercise: 'bench-press');
+    }
+
+    public function testItRefusesAPositionThePlanDoesNotHave(): void
+    {
+        ($this->kit->start)('Pecs');
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('no line at position 4');
+
+        ($this->kit->logSet)(position: 4);
+    }
+
     protected function tearDown(): void
     {
         $this->entityManager->clear();

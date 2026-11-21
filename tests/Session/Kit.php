@@ -6,6 +6,7 @@ namespace App\Tests\Session;
 
 use App\Exercise\ExerciseRepository;
 use App\Session\Action\AbortSession;
+use App\Session\Action\AddSet;
 use App\Session\Action\FinishSession;
 use App\Session\Action\LogSet;
 use App\Session\Action\PauseSession;
@@ -13,6 +14,7 @@ use App\Session\Action\ResumeSession;
 use App\Session\Action\StartSession;
 use App\Session\Action\UpdateSession;
 use App\Session\Mcp\AbortSessionTool;
+use App\Session\Mcp\AddSetTool;
 use App\Session\Mcp\CurrentSessionTool;
 use App\Session\Mcp\FinishSessionTool;
 use App\Session\Mcp\ListSessionsTool;
@@ -51,6 +53,8 @@ final readonly class Kit
 
     public UpdateSessionTool $updateSession;
 
+    public AddSetTool $addSet;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         WorkoutSessionRepository $sessions,
@@ -70,6 +74,7 @@ final readonly class Kit
         $this->finish = new FinishSessionTool(new FinishSession($entityManager, $sessions, $clock, $workflow, $check), $clock);
         $this->listSessions = new ListSessionsTool($sessions, $check, $clock);
         $this->showSession = new ShowSessionTool($sessions, $clock);
+        $this->addSet = new AddSetTool(new AddSet($entityManager, $sessions, $clock, $check), $clock);
         $this->updateSession = new UpdateSessionTool(new UpdateSession($entityManager, $sessions, $check, $clock), $check, $clock);
     }
 }

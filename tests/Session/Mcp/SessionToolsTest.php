@@ -135,6 +135,18 @@ final class SessionToolsTest extends KernelTestCase
         self::assertCount(1, $summary->sets);
     }
 
+    public function testBodyweightAndTimedWorkIsCountedBesideTheVolume(): void
+    {
+        ($this->kit->start)('Pecs');
+        ($this->kit->logSet)(exercise: 'plank', reps: 15);
+        ($this->kit->logSet)(position: 1, reps: 8, weight: 60.0);
+        $summary = ($this->kit->logSet)(exercise: 'plank', seconds: 45);
+
+        self::assertSame(480.0, $summary->volume);
+        self::assertSame(23, $summary->reps);
+        self::assertSame(45, $summary->timedSeconds);
+    }
+
     public function testItReportsProgressAgainstThePlan(): void
     {
         ($this->kit->start)('Pecs');
@@ -214,6 +226,17 @@ final class SessionToolsTest extends KernelTestCase
     {
         $this->expectException(ToolCallException::class);
         $this->expectExceptionMessageIsOrContains('No session is open');
+
+        ($this->kit->logSet)(position: 1, reps: 8);
+    }
+
+    public function testAForgottenSetAfterFinishingPointsToAddSet(): void
+    {
+        ($this->kit->start)('Pecs');
+        ($this->kit->finish)();
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('add_set');
 
         ($this->kit->logSet)(position: 1, reps: 8);
     }

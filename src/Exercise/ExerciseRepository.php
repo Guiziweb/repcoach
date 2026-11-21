@@ -6,6 +6,7 @@ namespace App\Exercise;
 
 use App\Exercise\Enum\BodyPart;
 use App\Exercise\Enum\Difficulty;
+use App\Exercise\Enum\Equipment;
 use App\Exercise\Enum\ExerciseCategory;
 use App\Exercise\Enum\Muscle;
 use App\Shared\NotFound;
@@ -44,10 +45,11 @@ final class ExerciseRepository extends ServiceEntityRepository
         ?Muscle $muscle = null,
         ?string $query = null,
         ?bool $bodyweight = null,
+        ?Equipment $equipment = null,
         int $limit = 20,
     ): array {
         /** @var list<Exercise> $found */
-        $found = $this->filtered($bodyPart, $category, $difficulty, $muscle, $query, $bodyweight)
+        $found = $this->filtered($bodyPart, $category, $difficulty, $muscle, $query, $bodyweight, $equipment)
             ->setMaxResults(max(1, min($limit, self::MAX_RESULTS)))
             ->orderBy('e.name', 'ASC')
             ->getQuery()
@@ -63,8 +65,9 @@ final class ExerciseRepository extends ServiceEntityRepository
         ?Muscle $muscle = null,
         ?string $query = null,
         ?bool $bodyweight = null,
+        ?Equipment $equipment = null,
     ): int {
-        return (int) $this->filtered($bodyPart, $category, $difficulty, $muscle, $query, $bodyweight)
+        return (int) $this->filtered($bodyPart, $category, $difficulty, $muscle, $query, $bodyweight, $equipment)
             ->select('COUNT(e.id)')
             ->getQuery()
             ->getSingleScalarResult();
@@ -77,6 +80,7 @@ final class ExerciseRepository extends ServiceEntityRepository
         ?Muscle $muscle,
         ?string $query,
         ?bool $bodyweight,
+        ?Equipment $equipment,
     ): QueryBuilder {
         $builder = $this->createQueryBuilder('e');
 
@@ -84,6 +88,7 @@ final class ExerciseRepository extends ServiceEntityRepository
         $this->whereEquals($builder, 'category', $category);
         $this->whereEquals($builder, 'difficulty', $difficulty);
         $this->whereEquals($builder, 'bodyweight', $bodyweight);
+        $this->whereEquals($builder, 'equipment', $equipment);
 
         if (null !== $muscle) {
             $builder
@@ -91,13 +96,18 @@ final class ExerciseRepository extends ServiceEntityRepository
                 ->setParameter('muscle', '%"'.$this->escapeForLike($muscle->value).'"%');
         }
 
-        if (null !== $query && '' !== $query) {
-            $builder
-                ->andWhere(\sprintf(
-                    'LOWER(e.name) LIKE :query ESCAPE \'%1$s\' OR LOWER(e.primaryMuscles) LIKE :query ESCAPE \'%1$s\' OR LOWER(e.secondaryMuscles) LIKE :query ESCAPE \'%1$s\' OR LOWER(e.bodyPart) LIKE :query ESCAPE \'%1$s\'',
-                    self::LIKE_ESCAPE,
-                ))
-                ->setParameter('query', '%'.$this->escapeForLike(mb_strtolower($query)).'%');
+        if (null !== $query && '' !== trim($query)) {
+            preg_match_all('/[a-z0-9]+/', mb_strtolower($query), $words);
+
+            if ([] === $words[0]) {
+                $builder->andWhere('1 = 0');
+            }
+
+            foreach ($words[0] as $position => $word) {
+                $builder
+                    ->andWhere(\sprintf('LOWER(e.name) LIKE :word%1$d OR e.primaryMuscles LIKE :word%1$d OR e.secondaryMuscles LIKE :word%1$d OR e.bodyPart LIKE :word%1$d', $position))
+                    ->setParameter('word'.$position, '%'.$word.'%');
+            }
         }
 
         return $builder;

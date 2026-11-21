@@ -78,7 +78,7 @@ Talk to it in plain words, in any language. For example:
 
 | Tool | What it does |
 |---|---|
-| `search_exercises` | Find exercises in the catalogue by name, muscle, body part, difficulty or bodyweight |
+| `search_exercises` | Find exercises in the catalogue by name, muscle, body part, difficulty, equipment or bodyweight |
 
 **Saved workouts**
 
@@ -150,7 +150,7 @@ The code is split by domain (`Exercise`, `Workout`, `Session`, `Shared`), with o
 
 ## Tests
 
-`make ci` runs php-cs-fixer, the Symfony lints, PHPStan (max level) and PHPUnit. One test talks to the real `/mcp` endpoint and calls every tool once, so a tool added without a test fails the build. The tests never use the network.
+`make ci` runs php-cs-fixer, the Symfony lints, PHPStan (max level) and PHPUnit. One test talks to the server over HTTP, a transport only switched on in the test environment, and calls every tool once, so a tool added without a test fails the build. The tests never use the network.
 
 ## Credits
 

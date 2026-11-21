@@ -34,16 +34,17 @@ final readonly class UpdateSessionTool
     ) {
     }
 
+    #[Schema(additionalProperties: false)]
     public function __invoke(
         #[Schema(description: 'Id of the session, as shown by list_sessions', minimum: 1)]
-        int $session,
+        int $sessionId,
         #[Schema(description: 'When it started, as an ISO 8601 date and time with its timezone offset, in the past, for example 2026-11-15T09:38:00+01:00')]
         ?string $startedAt = null,
         #[Schema(description: 'How long it lasted, in minutes', minimum: 1, maximum: Limits::MAX_MINUTES)]
         ?int $durationMinutes = null,
     ): SessionSummary {
         return $this->refusing(fn (): SessionSummary => SessionSummary::of(
-            ($this->update)($session, null === $startedAt ? null : $this->moment($startedAt), $durationMinutes),
+            ($this->update)($sessionId, null === $startedAt ? null : $this->moment($startedAt), $durationMinutes),
             $this->clock->now(),
         ));
     }

@@ -32,6 +32,7 @@ final readonly class DuplicateWorkoutTool
     /**
      * @return array{workouts: list<WorkoutSummary>}
      */
+    #[Schema(additionalProperties: false)]
     public function __invoke(
         #[Schema(description: 'Name of the workout to copy')]
         string $workout,

@@ -27,6 +27,7 @@ final readonly class RenameWorkoutTool
     ) {
     }
 
+    #[Schema(additionalProperties: false)]
     public function __invoke(
         #[Schema(description: 'Name of the workout to rename')]
         string $workout,

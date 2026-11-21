@@ -27,6 +27,7 @@ final readonly class CreateWorkoutTool
     ) {
     }
 
+    #[Schema(additionalProperties: false)]
     public function __invoke(
         #[Schema(description: 'How you will call it, e.g. "Pecs"', minLength: 1, maxLength: Limits::MAX_NAME)]
         string $name,

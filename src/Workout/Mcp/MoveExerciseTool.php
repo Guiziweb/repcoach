@@ -26,6 +26,7 @@ final readonly class MoveExerciseTool
     ) {
     }
 
+    #[Schema(additionalProperties: false)]
     public function __invoke(
         #[Schema(description: 'Name of the workout to reorder')]
         string $workout,

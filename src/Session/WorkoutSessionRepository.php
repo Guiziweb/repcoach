@@ -51,9 +51,9 @@ final class WorkoutSessionRepository extends ServiceEntityRepository
      */
     public function closed(ClosedStatus $status, ?string $workout, ?DateTimeImmutable $from, ?DateTimeImmutable $until, int $limit): array
     {
-        /** @var list<array{0: WorkoutSession, sets: numeric-string|int, volume: numeric-string|float|int}> $rows */
+        /** @var list<array{0: WorkoutSession, sets: numeric-string|int, volume: numeric-string|float|int, reps: numeric-string|int, timedSeconds: numeric-string|int}> $rows */
         $rows = $this->filtered($status, $workout, $from, $until)
-            ->select('s', 'COUNT(p.id) AS sets', 'COALESCE(SUM(COALESCE(p.reps, 0) * COALESCE(p.weight, 0)), 0) AS volume')
+            ->select('s', 'COUNT(p.id) AS sets', 'COALESCE(SUM(COALESCE(p.reps, 0) * COALESCE(p.weight, 0)), 0) AS volume', 'COALESCE(SUM(p.reps), 0) AS reps', 'COALESCE(SUM(p.seconds), 0) AS timedSeconds')
             ->leftJoin('s.sets', 'p')
             ->groupBy('s.id')
             ->orderBy('s.startedAt', 'DESC')
@@ -62,7 +62,7 @@ final class WorkoutSessionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
 
-        return array_map(static fn (array $row): SessionTally => new SessionTally($row[0], (int) $row['sets'], (float) $row['volume']), $rows);
+        return array_map(static fn (array $row): SessionTally => new SessionTally($row[0], (int) $row['sets'], (float) $row['volume'], (int) $row['reps'], (int) $row['timedSeconds']), $rows);
     }
 
     public function countClosed(ClosedStatus $status, ?string $workout, ?DateTimeImmutable $from, ?DateTimeImmutable $until): int

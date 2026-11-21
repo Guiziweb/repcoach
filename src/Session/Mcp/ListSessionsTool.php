@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 #[McpTool(
     name: 'list_sessions',
     title: 'List past sessions',
-    description: 'Past sessions, most recent first, one line each: id, workout, start, duration, total volume and number of sets. Filter by workout name or by day to answer "what did I do last Monday". Use show_session with an id to see the sets. "matching" counts every session that fits the filters, even beyond the limit.',
+    description: 'Past sessions, most recent first, one line each: id, workout, start, duration, total volume and number of sets. Filter by workout name or by day to answer "what did I do last Monday". Pass an id as sessionId to show_session to see the sets. "matching" counts every session that fits the filters, even beyond the limit.',
     annotations: new ToolAnnotations(readOnlyHint: true, idempotentHint: true, openWorldHint: false),
     outputSchema: ['type' => 'object', 'required' => ['matching', 'sessions'], 'properties' => ['matching' => ['type' => 'integer'], 'sessions' => ['type' => 'array', 'items' => SessionOverview::SCHEMA]]],
 )]
@@ -39,6 +39,7 @@ final readonly class ListSessionsTool
     /**
      * @return array{matching: int, sessions: list<SessionOverview>}
      */
+    #[Schema(additionalProperties: false)]
     public function __invoke(
         #[Schema(description: 'How many sessions to return', minimum: 1, maximum: Limits::MAX_SESSIONS)]
         int $limit = 10,

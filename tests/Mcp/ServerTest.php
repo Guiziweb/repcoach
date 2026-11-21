@@ -7,6 +7,7 @@ namespace App\Tests\Mcp;
 use App\Tests\ExerciseFixture;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 final class ServerTest extends WebTestCase
@@ -60,6 +61,23 @@ final class ServerTest extends WebTestCase
         foreach ($this->client->tools() as $tool) {
             self::assertArrayHasKey('outputSchema', $tool, \sprintf('%s has no outputSchema', \is_string($tool['name']) ? $tool['name'] : '?'));
         }
+    }
+
+    public function testEveryToolRefusesArgumentsItDoesNotKnow(): void
+    {
+        foreach ($this->client->tools() as $tool) {
+            $schema = $tool['inputSchema'] ?? null;
+            self::assertIsArray($schema);
+            self::assertFalse($schema['additionalProperties'] ?? null, \sprintf('%s accepts unknown arguments', \is_string($tool['name']) ? $tool['name'] : '?'));
+        }
+    }
+
+    public function testAnUnknownArgumentIsRefusedWithItsName(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageIsOrContains('`colour`');
+
+        $this->client->call('search_exercises', ['colour' => 'red']);
     }
 
     public function testItOffersTheCoachingPrompts(): void
@@ -148,21 +166,21 @@ final class ServerTest extends WebTestCase
         self::assertIsArray($finished);
         $id = $finished['id'];
 
-        $shown = $this->call('show_session', ['session' => $id]);
+        $shown = $this->call('show_session', ['sessionId' => $id]);
         self::assertCount(1, $this->listOf($shown, 'sets'));
 
-        $this->call('update_session', ['session' => $id, 'durationMinutes' => 40]);
-        $added = $this->call('add_set', ['session' => $id, 'position' => 1, 'reps' => 6, 'weight' => 65]);
+        $this->call('update_session', ['sessionId' => $id, 'durationMinutes' => 40]);
+        $added = $this->call('add_set', ['sessionId' => $id, 'position' => 1, 'reps' => 6, 'weight' => 65]);
 
         $sets = $this->listOf($added, 'sets');
         $last = end($sets);
         self::assertIsArray($last);
         $setId = $last['id'];
 
-        $this->call('change_set', ['set' => $setId, 'reps' => 7, 'weight' => 65]);
-        $this->call('remove_set', ['set' => $setId]);
+        $this->call('change_set', ['setId' => $setId, 'reps' => 7, 'weight' => 65]);
+        $this->call('remove_set', ['setId' => $setId]);
 
-        self::assertSame($id, $this->call('delete_session', ['session' => $id])['deleted']);
+        self::assertSame($id, $this->call('delete_session', ['sessionId' => $id])['deleted']);
     }
 
     /**

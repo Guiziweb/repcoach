@@ -26,6 +26,7 @@ final readonly class ShowWorkoutTool
     ) {
     }
 
+    #[Schema(additionalProperties: false)]
     public function __invoke(
         #[Schema(description: 'Name of the workout to show')]
         string $workout,

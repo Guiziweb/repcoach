@@ -6,6 +6,7 @@ namespace App\Session\Mcp;
 
 use App\Session\WorkoutSessionRepository;
 use Mcp\Capability\Attribute\McpTool;
+use Mcp\Capability\Attribute\Schema;
 use Mcp\Schema\ToolAnnotations;
 use Psr\Clock\ClockInterface;
 
@@ -24,6 +25,7 @@ final readonly class CurrentSessionTool
     ) {
     }
 
+    #[Schema(additionalProperties: false)]
     public function __invoke(): SessionSummary
     {
         $session = $this->sessions->open();

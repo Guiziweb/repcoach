@@ -329,6 +329,39 @@ final class HistoryToolsTest extends KernelTestCase
         ($this->kit->updateSession)(999, durationMinutes: 30);
     }
 
+    public function testItPointsToResumeWhenAForgottenSetLandsOnAPausedSession(): void
+    {
+        $paused = ($this->kit->start)('Pecs');
+        ($this->kit->pause)();
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('Resume it');
+
+        ($this->kit->addSet)($paused->id, position: 1, reps: 8, weight: 60.0);
+    }
+
+    public function testItRefusesAForgottenSetBeyondTheLimits(): void
+    {
+        $done = $this->performed();
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('weight must be between');
+
+        ($this->kit->addSet)($done->id, position: 1, reps: 8, weight: Limits::MAX_WEIGHT + 1);
+    }
+
+    public function testItAddsAForgottenSetWithWhatTheLinePlanned(): void
+    {
+        $done = $this->performed();
+
+        $completed = ($this->kit->addSet)($done->id, position: 1);
+
+        self::assertCount(2, $completed->sets);
+        self::assertSame(8, $completed->sets[1]->reps);
+        self::assertSame(60.0, $completed->sets[1]->weight);
+        self::assertSame(2, $completed->planned[0]->done);
+    }
+
     private function performed(int $seconds = 60): SessionSummary
     {
         ($this->kit->start)('Pecs');

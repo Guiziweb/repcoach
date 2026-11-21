@@ -1,7 +1,7 @@
 mcp:
     servers:
         default:
-            name: 'gym'
+            name: 'repcoach'
             registry: '*'
 
             session:

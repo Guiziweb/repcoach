@@ -8,6 +8,7 @@ use App\Exercise\ExerciseRepository;
 use App\Session\ClosedStatus;
 use App\Session\Mcp\SessionSummary;
 use App\Session\WorkoutSessionRepository;
+use App\Shared\Limits;
 use App\Tests\ExerciseFixture;
 use App\Tests\Session\Kit;
 use App\Workout\WorkoutRepository;
@@ -231,6 +232,101 @@ final class HistoryToolsTest extends KernelTestCase
         $listed = ($this->kit->listSessions)(limit: 1);
 
         self::assertSame($second->id, $listed['sessions'][0]->id);
+    }
+
+    public function testItRefusesToCorrectASessionStillOpen(): void
+    {
+        $open = ($this->kit->start)('Pecs');
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('still open');
+
+        ($this->kit->updateSession)($open->id, durationMinutes: 30);
+    }
+
+    public function testItRefusesADateItCannotRead(): void
+    {
+        $done = $this->performed();
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('ISO 8601');
+
+        ($this->kit->updateSession)($done->id, startedAt: 'hier soir');
+    }
+
+    #[DataProvider('unusableStarts')]
+    public function testItRefusesAStartThatIsNotAnExactMomentInThePast(string $moment): void
+    {
+        $done = $this->performed();
+
+        $this->expectException(ToolCallException::class);
+
+        ($this->kit->updateSession)($done->id, startedAt: $moment);
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function unusableStarts(): iterable
+    {
+        yield 'nothing at all' => [''];
+        yield 'a relative word' => ['tomorrow'];
+        yield 'no offset' => ['2026-10-26T18:00:00'];
+        yield 'a day that does not exist' => ['2026-02-30T10:00:00+01:00'];
+        yield 'the future' => ['2026-10-28T10:00:00+00:00'];
+        yield 'a year beyond four digits' => ['+99999-01-01T00:00:00Z'];
+    }
+
+    public function testItRefusesAnEndThatWouldFallInTheFuture(): void
+    {
+        $done = $this->performed(seconds: 1800);
+
+        try {
+            ($this->kit->updateSession)($done->id, startedAt: '2026-10-27T10:10:00+00:00');
+            self::fail('A session cannot end after now.');
+        } catch (ToolCallException $refused) {
+            self::assertStringContainsString('end in the future', $refused->getMessage());
+        }
+
+        self::assertSame($done->startedAt, ($this->kit->showSession)($done->id)->startedAt);
+    }
+
+    public function testItRefusesALongerDurationThatWouldEndInTheFuture(): void
+    {
+        $done = $this->performed(seconds: 60);
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('end in the future');
+
+        ($this->kit->updateSession)($done->id, startedAt: '2026-10-27T09:59:00+00:00', durationMinutes: 120);
+    }
+
+    public function testItRefusesACorrectionThatChangesNothing(): void
+    {
+        $done = $this->performed();
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('nothing to change');
+
+        ($this->kit->updateSession)($done->id);
+    }
+
+    public function testItRefusesADurationBeyondALongWorkout(): void
+    {
+        $done = $this->performed();
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('between 1 and');
+
+        ($this->kit->updateSession)($done->id, durationMinutes: Limits::MAX_MINUTES + 1);
+    }
+
+    public function testAnUnknownIdSaysHowToFindOne(): void
+    {
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('list_sessions');
+
+        ($this->kit->updateSession)(999, durationMinutes: 30);
     }
 
     private function performed(int $seconds = 60): SessionSummary

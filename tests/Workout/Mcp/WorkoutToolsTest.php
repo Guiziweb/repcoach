@@ -6,6 +6,7 @@ namespace App\Tests\Workout\Mcp;
 
 use App\Shared\Limits;
 use App\Tests\Workout\Kit;
+use App\Workout\Mcp\WorkoutSummary;
 use App\Workout\WorkoutRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -79,6 +80,39 @@ final class WorkoutToolsTest extends KernelTestCase
         $this->expectExceptionMessageIsOrContains('at most');
 
         ($this->kit->createWorkout)(str_repeat('a', Limits::MAX_NAME + 1));
+    }
+
+    public function testItListsWhatCanBeStarted(): void
+    {
+        ($this->kit->createWorkout)('Dos');
+        ($this->kit->createWorkout)('Pecs');
+
+        $listed = ($this->kit->listWorkouts)()['workouts'];
+
+        self::assertSame(['Dos', 'Pecs'], array_map(static fn (WorkoutSummary $w): string => $w->name, $listed));
+    }
+
+    public function testItFindsAWorkoutWhateverTheCaseOrSpacing(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+
+        self::assertSame('Pecs', ($this->kit->showWorkout)('pecs')->name);
+        self::assertSame('Pecs', ($this->kit->showWorkout)('  PECS ')->name);
+    }
+
+    public function testItFindsAnAccentedWorkoutWhateverTheCase(): void
+    {
+        ($this->kit->createWorkout)('Épaules');
+
+        self::assertSame('Épaules', ($this->kit->showWorkout)('épaules')->name);
+    }
+
+    public function testItKeepsAWorkoutNameWithoutTheSpacesAroundIt(): void
+    {
+        $workout = ($this->kit->createWorkout)('  Pecs ');
+
+        self::assertSame('Pecs', $workout->name);
+        self::assertSame('Pecs', ($this->kit->showWorkout)('Pecs')->name);
     }
 
     protected function tearDown(): void

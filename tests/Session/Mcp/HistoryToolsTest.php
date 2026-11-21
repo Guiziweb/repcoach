@@ -467,6 +467,16 @@ final class HistoryToolsTest extends KernelTestCase
         ($this->kit->changeSet)($done->sets[0]->id, reps: 8, seconds: 45);
     }
 
+    public function testItRemovesASetEnteredByMistake(): void
+    {
+        $done = $this->performed();
+
+        $emptied = ($this->kit->removeSet)($done->sets[0]->id);
+
+        self::assertSame([], $emptied->sets);
+        self::assertSame(0, $emptied->planned[0]->done);
+    }
+
     private function performed(int $seconds = 60): SessionSummary
     {
         ($this->kit->start)('Pecs');

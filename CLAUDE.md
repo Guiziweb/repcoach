@@ -41,7 +41,7 @@ make ci        cs + lint + stan + test, what CI runs
 
 Conventional Commits, written in English. One line per commit, no body.
 The scope is the domain: shared, exercise, workout, session, server,
-fixtures, docs, video or ci.
+fixtures, docs or ci.
 
 Commits are created by the GitHub App `guiziwebbot` through the API, so they
 show as Verified, never under a personal account.

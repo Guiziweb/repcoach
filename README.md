@@ -13,6 +13,8 @@ The model never does the maths. Volume, durations and dates come from tool resul
 
 Made for the Symfony AI & MCP Hackathon.
 
+https://github.com/user-attachments/assets/f4dbae54-c4af-424a-8e93-7d48484a9d52
+
 ## Running it
 
 You need PHP 8.4 or later with SQLite, Composer and make.

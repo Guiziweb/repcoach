@@ -266,6 +266,55 @@ final class WorkoutToolsTest extends KernelTestCase
         return array_map(static fn (PlannedExerciseView $line): int => $line->position, $workout->exercises);
     }
 
+    public function testItRemovesALineAndClosesTheGap(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+        ($this->kit->planExercise)('Pecs', 'bench-press', sets: 4, reps: 8, weight: 60.0);
+        ($this->kit->planExercise)('Pecs', 'plank', sets: 3, seconds: 45);
+
+        $workout = ($this->kit->removeExercise)('Pecs', position: 1);
+
+        self::assertCount(1, $workout->exercises);
+        self::assertSame('Plank', $workout->exercises[0]->exercise);
+        self::assertSame(1, $workout->exercises[0]->position);
+    }
+
+    public function testItTellsTheModelWhichPositionsExist(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+        ($this->kit->planExercise)('Pecs', 'bench-press', sets: 4, reps: 8, weight: 60.0);
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('no exercise at position 3');
+
+        ($this->kit->removeExercise)('Pecs', position: 3);
+    }
+
+    public function testTheNextExerciseLandsAfterTheLastOneEvenAfterRemovals(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+        ($this->kit->planExercise)('Pecs', 'bench-press', sets: 4, reps: 8, weight: 60.0);
+        ($this->kit->planExercise)('Pecs', 'plank', sets: 3, seconds: 45);
+        ($this->kit->removeExercise)('Pecs', position: 1);
+
+        $this->entityManager->clear();
+        $workout = ($this->kit->planExercise)('Pecs', 'bench-press', sets: 5, reps: 5, weight: 70.0);
+
+        self::assertSame([1, 2], $this->positions($workout));
+    }
+
+    public function testTheRenumberingSurvivesAReload(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+        ($this->kit->planExercise)('Pecs', 'bench-press', sets: 4, reps: 8, weight: 60.0);
+        ($this->kit->planExercise)('Pecs', 'plank', sets: 3, seconds: 45);
+        ($this->kit->removeExercise)('Pecs', position: 1);
+
+        $this->entityManager->clear();
+
+        self::assertSame([1], $this->positions(($this->kit->showWorkout)('Pecs')));
+    }
+
     protected function tearDown(): void
     {
         $this->entityManager->clear();

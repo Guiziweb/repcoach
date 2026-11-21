@@ -1,0 +1,22 @@
+parameters:
+    app.programs:
+        Push:
+            - { exercise: bench-press, sets: 4, reps: 8, weight: 60 }
+            - { exercise: incline-db-press, sets: 3, reps: 10, weight: 22 }
+            - { exercise: ohp, sets: 3, reps: 8, weight: 40 }
+            - { exercise: lateral-raise, sets: 3, reps: 12, weight: 8 }
+            - { exercise: tricep-pushdown, sets: 3, reps: 12, weight: 25 }
+        Pull:
+            - { exercise: pull-up, sets: 3, reps: 10 }
+            - { exercise: barbell-curl, sets: 3, reps: 10, weight: 30 }
+            - { exercise: barbell-row, sets: 4, reps: 8, weight: 60 }
+            - { exercise: lat-pulldown, sets: 3, reps: 10, weight: 50 }
+            - { exercise: seated-cable-row, sets: 3, reps: 12, weight: 45 }
+            - { exercise: face-pull, sets: 3, reps: 15, weight: 20 }
+        Legs:
+            - { exercise: squat, sets: 4, reps: 6, weight: 80 }
+            - { exercise: romanian-deadlift, sets: 3, reps: 8, weight: 70 }
+            - { exercise: leg-press, sets: 3, reps: 12, weight: 120 }
+            - { exercise: leg-curl, sets: 3, reps: 12, weight: 35 }
+            - { exercise: standing-calf-raise, sets: 4, reps: 15, weight: 60 }
+            - { exercise: plank, sets: 3, seconds: 45 }

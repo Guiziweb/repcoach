@@ -315,6 +315,64 @@ final class WorkoutToolsTest extends KernelTestCase
         self::assertSame([1], $this->positions(($this->kit->showWorkout)('Pecs')));
     }
 
+    public function testItRenamesAWorkout(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+        ($this->kit->planExercise)('Pecs', 'bench-press', sets: 4, reps: 8, weight: 60.0);
+
+        $renamed = ($this->kit->renameWorkout)('Pecs', 'Haut du corps');
+
+        self::assertSame('Haut du corps', $renamed->name);
+        self::assertCount(1, $renamed->exercises);
+        self::assertSame(['Haut du corps'], array_map(static fn (WorkoutSummary $w): string => $w->name, ($this->kit->listWorkouts)()['workouts']));
+    }
+
+    public function testItRefusesANameAlreadyTaken(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+        ($this->kit->createWorkout)('Dos');
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('already exists');
+
+        ($this->kit->renameWorkout)('Dos', 'Pecs');
+    }
+
+    public function testRenamingToItsOwnNameIsAccepted(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+
+        self::assertSame('Pecs', ($this->kit->renameWorkout)('Pecs', 'Pecs')->name);
+    }
+
+    public function testItRefusesANameThatOnlyDiffersByCaseWhenRenaming(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+        ($this->kit->createWorkout)('Dos');
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('already exists');
+
+        ($this->kit->renameWorkout)('Dos', 'PECS');
+    }
+
+    public function testRenamingOnlyTheCaseIsAccepted(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+
+        self::assertSame('PECS', ($this->kit->renameWorkout)('Pecs', 'PECS')->name);
+    }
+
+    public function testItRefusesToRenameToABlankName(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('needs a name');
+
+        ($this->kit->renameWorkout)('Pecs', '   ');
+    }
+
     protected function tearDown(): void
     {
         $this->entityManager->clear();

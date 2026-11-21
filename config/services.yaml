@@ -9,4 +9,5 @@ services:
             - '../src/Kernel.php'
             - '../src/Exercise/Enum/'
             - '../src/Exercise/Exercise.php'
+            - '../src/Exercise/Import/InvalidExerciseRow.php'
             - '../src/Shared/{Effort,ExerciseEffort,PlannedEffort,Limits,Minutes,NotFound,Reason,Refused}.php'

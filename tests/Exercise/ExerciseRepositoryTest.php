@@ -77,10 +77,14 @@ final class ExerciseRepositoryTest extends KernelTestCase
         self::assertSame(['bench-press'], array_map(static fn (Exercise $e): string => $e->id, $found));
     }
 
-    public function testWildcardsAloneMatchNothing(): void
+    public function testAQueryWithoutWordsFiltersNothing(): void
     {
-        self::assertCount(0, $this->exercises->search(query: '%'));
-        self::assertCount(0, $this->exercises->search(query: '_'));
+        self::assertCount(4, $this->exercises->search(query: '%_"['));
+    }
+
+    public function testAnAccentedLetterStaysPartOfItsWord(): void
+    {
+        self::assertCount(0, $this->exercises->search(query: 'pressé'));
     }
 
     public function testEveryWordMustMatchSomewhereInAnyOrder(): void
@@ -102,13 +106,6 @@ final class ExerciseRepositoryTest extends KernelTestCase
         self::assertCount(1, $this->exercises->search(query: 'forearm extensors'));
         self::assertCount(1, $this->exercises->search(query: 'Lower Arms'));
         self::assertCount(1, $this->exercises->search(query: 'upper-legs'));
-    }
-
-    public function testPunctuationAloneMatchesNothing(): void
-    {
-        self::assertCount(0, $this->exercises->search(query: '"'));
-        self::assertCount(0, $this->exercises->search(query: '['));
-        self::assertCount(0, $this->exercises->search(query: ','));
     }
 
     public function testItFindsAnExerciseByTheMuscleItWorks(): void

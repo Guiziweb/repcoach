@@ -23,6 +23,8 @@ final class ExerciseRepository extends ServiceEntityRepository
 {
     public const int MAX_RESULTS = 50;
 
+    public const int MAX_QUERY = 200;
+
     private const string LIKE_ESCAPE = '!';
 
     public function __construct(ManagerRegistry $registry)
@@ -97,11 +99,7 @@ final class ExerciseRepository extends ServiceEntityRepository
         }
 
         if (null !== $query && '' !== trim($query)) {
-            preg_match_all('/[a-z0-9]+/', mb_strtolower($query), $words);
-
-            if ([] === $words[0]) {
-                $builder->andWhere('1 = 0');
-            }
+            preg_match_all('/[\p{L}\p{N}]+/u', mb_strtolower($query), $words);
 
             foreach ($words[0] as $position => $word) {
                 $builder

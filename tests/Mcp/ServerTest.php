@@ -80,6 +80,22 @@ final class ServerTest extends WebTestCase
         $this->client->call('search_exercises', ['colour' => 'red']);
     }
 
+    public function testASearchWithoutAnyWordIsRefused(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageIsOrContains('pattern');
+
+        $this->client->call('search_exercises', ['query' => '"%"']);
+    }
+
+    public function testATooLongSearchIsRefused(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageIsOrContains('longer than');
+
+        $this->client->call('search_exercises', ['query' => str_repeat('curl ', 50)]);
+    }
+
     public function testItOffersTheCoachingPrompts(): void
     {
         $names = array_map(static fn (array $prompt): mixed => $prompt['name'], $this->client->prompts());

@@ -49,7 +49,7 @@ final readonly class SearchExercisesTool
         ?Difficulty $difficulty = null,
         #[Schema(description: 'Muscle the exercise works, as a primary or secondary target')]
         ?Muscle $muscle = null,
-        #[Schema(description: 'Free text matched against the name, the muscles worked and the body part, in English. "biceps" and "curl" both work.')]
+        #[Schema(description: 'Words matched against the name, the muscles worked and the body part, in English. Every word must match. "biceps" and "curl" both work.', maxLength: ExerciseRepository::MAX_QUERY, pattern: '[\\p{L}\\p{N}]')]
         ?string $query = null,
         #[Schema(description: 'True only for exercises that need no equipment at all (a pull-up bar, rings or a bench count as equipment), false to exclude them')]
         ?bool $bodyweight = null,

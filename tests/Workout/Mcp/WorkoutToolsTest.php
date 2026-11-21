@@ -8,6 +8,7 @@ use App\Exercise\ExerciseRepository;
 use App\Shared\Limits;
 use App\Tests\ExerciseFixture;
 use App\Tests\Workout\Kit;
+use App\Workout\Mcp\PlannedExerciseView;
 use App\Workout\Mcp\WorkoutSummary;
 use App\Workout\WorkoutRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -215,6 +216,54 @@ final class WorkoutToolsTest extends KernelTestCase
         $line = ($this->kit->showWorkout)('Pecs')->exercises[0];
         self::assertSame(4, $line->sets);
         self::assertSame(60.0, $line->weight);
+    }
+
+    public function testItMovesALineDown(): void
+    {
+        $this->threeExercises();
+
+        $workout = ($this->kit->moveExercise)('Pecs', position: 1, to: 3);
+
+        self::assertSame(['Plank', 'Barbell Bench Press', 'Barbell Bench Press'], array_map(static fn (PlannedExerciseView $l): string => $l->exercise, $workout->exercises));
+        self::assertSame([1, 2, 3], $this->positions($workout));
+        self::assertSame(45, $workout->exercises[0]->seconds);
+    }
+
+    public function testItMovesALineUp(): void
+    {
+        $this->threeExercises();
+
+        $workout = ($this->kit->moveExercise)('Pecs', position: 2, to: 1);
+
+        self::assertSame([1, 2, 3], $this->positions($workout));
+        self::assertSame(45, $workout->exercises[0]->seconds);
+    }
+
+    public function testMovingBeyondTheEndPutsItLast(): void
+    {
+        $this->threeExercises();
+
+        $workout = ($this->kit->moveExercise)('Pecs', position: 1, to: 99);
+
+        self::assertSame([1, 2, 3], $this->positions($workout));
+        self::assertSame('Barbell Bench Press', $workout->exercises[2]->exercise);
+        self::assertSame(70.0, $workout->exercises[2]->weight);
+    }
+
+    private function threeExercises(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+        ($this->kit->planExercise)('Pecs', 'bench-press', sets: 4, reps: 8, weight: 70.0);
+        ($this->kit->planExercise)('Pecs', 'plank', sets: 3, seconds: 45);
+        ($this->kit->planExercise)('Pecs', 'bench-press', sets: 2, reps: 12, weight: 40.0);
+    }
+
+    /**
+     * @return list<int>
+     */
+    private function positions(WorkoutSummary $workout): array
+    {
+        return array_map(static fn (PlannedExerciseView $line): int => $line->position, $workout->exercises);
     }
 
     protected function tearDown(): void

@@ -6,6 +6,7 @@ namespace App\Tests\Session\Mcp;
 
 use App\Exercise\ExerciseRepository;
 use App\Session\ClosedStatus;
+use App\Session\Mcp\SessionSummary;
 use App\Session\WorkoutSessionRepository;
 use App\Tests\ExerciseFixture;
 use App\Tests\Session\Kit;
@@ -19,6 +20,8 @@ use Symfony\Component\Clock\MockClock;
 
 final class HistoryToolsTest extends KernelTestCase
 {
+    private MockClock $clock;
+
     private Kit $kit;
 
     private EntityManagerInterface $entityManager;
@@ -50,7 +53,8 @@ final class HistoryToolsTest extends KernelTestCase
         $exercises = self::getContainer()->get(ExerciseRepository::class);
         self::assertInstanceOf(ExerciseRepository::class, $exercises);
 
-        $this->kit = new Kit($entityManager, $sessions, $workouts, $exercises, new MockClock('2026-10-27 10:00:00'), self::getContainer()->get('state_machine.session'));
+        $this->clock = new MockClock('2026-10-27 10:00:00');
+        $this->kit = new Kit($entityManager, $sessions, $workouts, $exercises, $this->clock, self::getContainer()->get('state_machine.session'));
     }
 
     public function testAnAbortedSessionCanBeFoundToo(): void
@@ -93,6 +97,104 @@ final class HistoryToolsTest extends KernelTestCase
         $this->expectExceptionMessageIsOrContains('YYYY-MM-DD');
 
         ($this->kit->listSessions)(to: '');
+    }
+
+    public function testItListsFinishedSessionsMostRecentFirst(): void
+    {
+        $this->performed();
+        $this->clock->sleep(86400);
+        $second = $this->performed();
+
+        $listed = ($this->kit->listSessions)();
+
+        self::assertSame(2, $listed['matching']);
+        self::assertSame($second->id, $listed['sessions'][0]->id);
+    }
+
+    public function testAListedSessionIsAOneLineSummary(): void
+    {
+        $done = $this->performed();
+
+        $line = ($this->kit->listSessions)()['sessions'][0];
+
+        self::assertSame($done->id, $line->id);
+        self::assertSame('Pecs', $line->workout);
+        self::assertSame(1, $line->sets);
+        self::assertSame($done->volume, $line->volume);
+        self::assertSame($done->durationSeconds, $line->durationSeconds);
+    }
+
+    public function testItStopsAtTheLimitButCountsEverySession(): void
+    {
+        $this->performed();
+        $this->clock->sleep(86400);
+        $this->performed();
+        $this->clock->sleep(86400);
+        $latest = $this->performed();
+
+        $listed = ($this->kit->listSessions)(limit: 2);
+
+        self::assertSame(3, $listed['matching']);
+        self::assertCount(2, $listed['sessions']);
+        self::assertSame($latest->id, $listed['sessions'][0]->id);
+    }
+
+    public function testItFindsTheSessionsOfOneDay(): void
+    {
+        $this->performed();
+        $this->clock->sleep(86400);
+        $second = $this->performed();
+
+        $listed = ($this->kit->listSessions)(from: '2026-10-28', to: '2026-10-28');
+
+        self::assertSame(1, $listed['matching']);
+        self::assertSame($second->id, $listed['sessions'][0]->id);
+    }
+
+    public function testTheLastDayIsIncluded(): void
+    {
+        $this->performed();
+
+        self::assertSame(1, ($this->kit->listSessions)(to: '2026-10-27')['matching']);
+        self::assertSame(0, ($this->kit->listSessions)(to: '2026-10-26')['matching']);
+        self::assertSame(0, ($this->kit->listSessions)(from: '2026-10-28')['matching']);
+    }
+
+    public function testItFiltersByWorkoutWhateverTheCase(): void
+    {
+        $this->performed();
+
+        self::assertSame(1, ($this->kit->listSessions)(workout: 'pecs')['matching']);
+        self::assertSame(0, ($this->kit->listSessions)(workout: 'Legs')['matching']);
+    }
+
+    public function testItShowsOneSessionInFull(): void
+    {
+        $done = $this->performed();
+
+        $shown = ($this->kit->showSession)($done->id);
+
+        self::assertCount(1, $shown->sets);
+        self::assertNotEmpty($shown->planned);
+    }
+
+    public function testItRefusesToShowAnUnknownSession(): void
+    {
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('list_sessions');
+
+        ($this->kit->showSession)(999);
+    }
+
+    private function performed(int $seconds = 60): SessionSummary
+    {
+        ($this->kit->start)('Pecs');
+        ($this->kit->logSet)(position: 1);
+        $this->clock->sleep($seconds);
+
+        $finished = ($this->kit->finish)();
+
+        return ($this->kit->showSession)($finished->id);
     }
 
     protected function tearDown(): void

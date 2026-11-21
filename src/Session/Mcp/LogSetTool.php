@@ -29,6 +29,7 @@ final readonly class LogSetTool
     ) {
     }
 
+    #[Schema(additionalProperties: false)]
     public function __invoke(
         #[Schema(description: 'Position of the planned line just performed, as shown by current_session. Omit it only for a set outside the plan.', minimum: 1)]
         ?int $position = null,

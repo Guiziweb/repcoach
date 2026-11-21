@@ -6,6 +6,7 @@ namespace App\Exercise\Mcp;
 
 use App\Exercise\Enum\BodyPart;
 use App\Exercise\Enum\Difficulty;
+use App\Exercise\Enum\Equipment;
 use App\Exercise\Enum\ExerciseCategory;
 use App\Exercise\Enum\Muscle;
 use App\Exercise\Exercise;
@@ -38,6 +39,7 @@ final readonly class SearchExercisesTool
     /**
      * @return array{matching: int, items: list<ExerciseSummary>}
      */
+    #[Schema(additionalProperties: false)]
     public function __invoke(
         #[Schema(description: 'Body part trained, e.g. chest')]
         ?BodyPart $bodyPart = null,
@@ -47,17 +49,19 @@ final readonly class SearchExercisesTool
         ?Difficulty $difficulty = null,
         #[Schema(description: 'Muscle the exercise works, as a primary or secondary target')]
         ?Muscle $muscle = null,
-        #[Schema(description: 'Free text matched against the name, the muscles worked and the body part, in English. "biceps" and "curl" both work.')]
+        #[Schema(description: 'Words matched against the name, the muscles worked and the body part, in English. Every word must match. "biceps" and "curl" both work.', maxLength: ExerciseRepository::MAX_QUERY, pattern: '[\\p{L}\\p{N}]')]
         ?string $query = null,
         #[Schema(description: 'True only for exercises that need no equipment at all (a pull-up bar, rings or a bench count as equipment), false to exclude them')]
         ?bool $bodyweight = null,
+        #[Schema(description: 'Equipment the exercise is done with, e.g. dumbbell')]
+        ?Equipment $equipment = null,
         #[Schema(description: 'How many to return', minimum: 1, maximum: ExerciseRepository::MAX_RESULTS)]
         int $limit = 20,
     ): array {
-        $found = $this->exercises->search($bodyPart, $category, $difficulty, $muscle, $query, $bodyweight, $limit);
+        $found = $this->exercises->search($bodyPart, $category, $difficulty, $muscle, $query, $bodyweight, $equipment, $limit);
 
         return [
-            'matching' => $this->exercises->countMatching($bodyPart, $category, $difficulty, $muscle, $query, $bodyweight),
+            'matching' => $this->exercises->countMatching($bodyPart, $category, $difficulty, $muscle, $query, $bodyweight, $equipment),
             'items' => array_map(static fn (Exercise $exercise): ExerciseSummary => ExerciseSummary::of($exercise), $found),
         ];
     }

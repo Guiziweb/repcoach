@@ -130,6 +130,8 @@ final class HistoryToolsTest extends KernelTestCase
         self::assertSame('Pecs', $line->workout);
         self::assertSame(1, $line->sets);
         self::assertSame($done->volume, $line->volume);
+        self::assertSame($done->reps, $line->reps);
+        self::assertSame($done->timedSeconds, $line->timedSeconds);
         self::assertSame($done->durationSeconds, $line->durationSeconds);
     }
 

@@ -28,6 +28,7 @@ final readonly class StartSessionTool
     ) {
     }
 
+    #[Schema(additionalProperties: false)]
     public function __invoke(
         #[Schema(description: 'Name of a saved workout, as returned by list_workouts')]
         string $workout,

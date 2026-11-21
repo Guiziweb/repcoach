@@ -33,7 +33,7 @@ trait RefusesPolitely
             Reason::SessionNotFound => ' Use list_sessions to see them.',
             Reason::SetNotFound => ' Use show_session to see the ids of the sets.',
             Reason::ExerciseNotFound => ' Use search_exercises to find its id.',
-            Reason::NoOpenSession => ' Start one with start_session, or see the workouts with list_workouts.',
+            Reason::NoOpenSession => ' Start one with start_session. To add a forgotten set to a session that is already finished, use add_set with its id from list_sessions.',
             Reason::SessionAlreadyOpen => ' Finish it with finish_session or abort it with abort_session first. current_session shows it.',
             Reason::SessionPaused => ' Resume it with resume_session before logging a set.',
             Reason::SessionStillOpenForCorrection => ' Finish it with finish_session first.',

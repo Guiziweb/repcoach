@@ -6,6 +6,7 @@ namespace App\Tests\Exercise;
 
 use App\Exercise\Enum\BodyPart;
 use App\Exercise\Enum\Difficulty;
+use App\Exercise\Enum\Equipment;
 use App\Exercise\Enum\ExerciseCategory;
 use App\Exercise\Enum\ForceType;
 use App\Exercise\Enum\Mechanic;
@@ -76,16 +77,35 @@ final class ExerciseRepositoryTest extends KernelTestCase
         self::assertSame(['bench-press'], array_map(static fn (Exercise $e): string => $e->id, $found));
     }
 
-    public function testItTreatsWildcardsInTheQueryAsPlainCharacters(): void
+    public function testAQueryWithoutWordsFiltersNothing(): void
     {
-        self::assertCount(0, $this->exercises->search(query: '%'));
-        self::assertCount(0, $this->exercises->search(query: 'ben_h'));
-        self::assertCount(0, $this->exercises->search(query: 'b%h'));
+        self::assertCount(4, $this->exercises->search(query: '%_"['));
+    }
+
+    public function testAnAccentedLetterStaysPartOfItsWord(): void
+    {
+        self::assertCount(0, $this->exercises->search(query: 'pressé'));
+    }
+
+    public function testEveryWordMustMatchSomewhereInAnyOrder(): void
+    {
+        $found = $this->exercises->search(query: 'chest barbell');
+
+        self::assertSame(['bench-press'], array_map(static fn (Exercise $exercise): string => $exercise->id, $found));
+        self::assertCount(1, $this->exercises->search(query: 'press bench'));
+        self::assertCount(0, $this->exercises->search(query: 'chest squat'));
     }
 
     public function testAnUnderscoreStillMatchesTheSnakeCaseMuscleNames(): void
     {
         self::assertCount(1, $this->exercises->search(query: 'forearm_extensors'));
+    }
+
+    public function testMusclesAndBodyPartsCanBeWrittenInPlainWords(): void
+    {
+        self::assertCount(1, $this->exercises->search(query: 'forearm extensors'));
+        self::assertCount(1, $this->exercises->search(query: 'Lower Arms'));
+        self::assertCount(1, $this->exercises->search(query: 'upper-legs'));
     }
 
     public function testItFindsAnExerciseByTheMuscleItWorks(): void
@@ -117,6 +137,14 @@ final class ExerciseRepositoryTest extends KernelTestCase
         self::assertCount(1, $this->exercises->search(query: 'BENCH'));
     }
 
+    public function testItFiltersByEquipment(): void
+    {
+        $found = $this->exercises->search(equipment: Equipment::Dumbbell);
+
+        self::assertSame(['curl'], array_map(static fn (Exercise $exercise): string => $exercise->id, $found));
+        self::assertSame(1, $this->exercises->countMatching(equipment: Equipment::Dumbbell));
+    }
+
     public function testItCombinesFilters(): void
     {
         self::assertCount(0, $this->exercises->search(bodyPart: BodyPart::Chest, difficulty: Difficulty::Advanced));
@@ -140,8 +168,8 @@ final class ExerciseRepositoryTest extends KernelTestCase
         return [
             $this->exercise('bench-press', 'Barbell Bench Press', BodyPart::Chest, ['pectoralis_major'], false, ['triceps_brachii']),
             $this->exercise('push-up', 'Push Up', BodyPart::Chest, ['pectoralis_major'], true),
-            $this->exercise('squat', 'Back Squat', BodyPart::UpperLegs, ['quadriceps'], false),
-            $this->exercise('curl', 'Wrist Curl', BodyPart::LowerArms, ['forearm_extensors'], false),
+            $this->exercise('squat', 'Back Squat', BodyPart::UpperLegs, ['quadriceps'], false, equipment: Equipment::Barbell),
+            $this->exercise('curl', 'Wrist Curl', BodyPart::LowerArms, ['forearm_extensors'], false, equipment: Equipment::Dumbbell),
         ];
     }
 
@@ -156,7 +184,7 @@ final class ExerciseRepositoryTest extends KernelTestCase
      * @param list<string> $muscles
      * @param list<string> $secondary
      */
-    private function exercise(string $id, string $name, BodyPart $bodyPart, array $muscles, bool $bodyweight, array $secondary = []): Exercise
+    private function exercise(string $id, string $name, BodyPart $bodyPart, array $muscles, bool $bodyweight, array $secondary = [], ?Equipment $equipment = null): Exercise
     {
         return new Exercise(
             id: $id,
@@ -175,6 +203,7 @@ final class ExerciseRepositoryTest extends KernelTestCase
             bodyweight: $bodyweight,
             unilateral: false,
             met: 5.0,
+            equipment: $equipment,
         );
     }
 }

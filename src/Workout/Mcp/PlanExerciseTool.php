@@ -27,6 +27,7 @@ final readonly class PlanExerciseTool
     ) {
     }
 
+    #[Schema(additionalProperties: false)]
     public function __invoke(
         #[Schema(description: 'Name of the workout to add to')]
         string $workout,

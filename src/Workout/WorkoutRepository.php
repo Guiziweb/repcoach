@@ -28,7 +28,8 @@ final class WorkoutRepository extends ServiceEntityRepository
         /** @var list<Workout> $workouts */
         $workouts = $this->createQueryBuilder('w')
             ->leftJoin('w.exercises', 'e')
-            ->addSelect('e')
+            ->leftJoin('e.exercise', 'x')
+            ->addSelect('e', 'x')
             ->orderBy('w.name', 'ASC')
             ->getQuery()
             ->getResult();
@@ -41,7 +42,7 @@ final class WorkoutRepository extends ServiceEntityRepository
         $wanted = mb_strtolower(trim($name));
         $workout = null;
 
-        foreach ($this->findAll() as $candidate) {
+        foreach ($this->all() as $candidate) {
             if (mb_strtolower($candidate->name) === $wanted) {
                 $workout = $candidate;
 

@@ -29,14 +29,15 @@ final readonly class DeleteSessionTool
     /**
      * @return array{deleted: int}
      */
+    #[Schema(additionalProperties: false)]
     public function __invoke(
         #[Schema(description: 'Id of the session, as shown by list_sessions', minimum: 1)]
-        int $session,
+        int $sessionId,
     ): array {
-        return $this->refusing(function () use ($session): array {
-            ($this->delete)($session);
+        return $this->refusing(function () use ($sessionId): array {
+            ($this->delete)($sessionId);
 
-            return ['deleted' => $session];
+            return ['deleted' => $sessionId];
         });
     }
 }

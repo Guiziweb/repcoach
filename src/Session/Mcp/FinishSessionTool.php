@@ -29,6 +29,7 @@ final readonly class FinishSessionTool
     ) {
     }
 
+    #[Schema(additionalProperties: false)]
     public function __invoke(
         #[Schema(description: 'How long the workout really lasted, in minutes. Give it when the sets were entered after the workout rather than during it.', minimum: 1, maximum: Limits::MAX_MINUTES)]
         ?int $durationMinutes = null,

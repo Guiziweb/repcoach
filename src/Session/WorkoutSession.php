@@ -192,6 +192,16 @@ class WorkoutSession
         return array_sum($this->sets->map(static fn (PerformedSet $set): float => $set->volume())->toArray());
     }
 
+    public function reps(): int
+    {
+        return array_sum($this->sets->map(static fn (PerformedSet $set): int => $set->reps ?? 0)->toArray());
+    }
+
+    public function timedSeconds(): int
+    {
+        return array_sum($this->sets->map(static fn (PerformedSet $set): int => $set->seconds ?? 0)->toArray());
+    }
+
     public function durationInSeconds(DateTimeImmutable $now): int
     {
         $end = $this->endedAt ?? $now;

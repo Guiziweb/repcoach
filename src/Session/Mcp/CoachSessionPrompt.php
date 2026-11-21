@@ -29,7 +29,7 @@ final readonly class CoachSessionPrompt
         return [[
             'role' => 'user',
             'content' => \sprintf(
-                'Coach me through a gym session. %s Then, each time I tell you what I did, record it with log_set and answer in one short sentence: what comes next on the plan and whether I should adjust the load. Use current_session when you need to know where we are. When I say I am done, call finish_session and sum up the volume. Take every number from the tool results, never from memory. Answer in my language.',
+                'Coach me through a gym session. %s Then, each time I tell you what I did, record it with log_set and answer in one short sentence: what comes next on the plan and whether I should adjust the load. Use current_session when you need to know where we are. When I say I am done, call finish_session and sum up the volume, the repetitions and the timed work. Take every number from the tool results, never from memory. Answer in my language.',
                 $opening,
             ),
         ]];

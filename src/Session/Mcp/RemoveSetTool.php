@@ -28,10 +28,11 @@ final readonly class RemoveSetTool
     ) {
     }
 
+    #[Schema(additionalProperties: false)]
     public function __invoke(
         #[Schema(description: 'Id of the set, as shown by show_session or current_session', minimum: 1)]
-        int $set,
+        int $setId,
     ): SessionSummary {
-        return $this->refusing(fn (): SessionSummary => SessionSummary::of(($this->remove)($set), $this->clock->now()));
+        return $this->refusing(fn (): SessionSummary => SessionSummary::of(($this->remove)($setId), $this->clock->now()));
     }
 }

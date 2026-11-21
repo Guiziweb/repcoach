@@ -26,6 +26,7 @@ final readonly class RemoveExerciseTool
     ) {
     }
 
+    #[Schema(additionalProperties: false)]
     public function __invoke(
         #[Schema(description: 'Name of the workout to edit')]
         string $workout,

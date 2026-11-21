@@ -10,7 +10,14 @@ mcp:
 
             transports:
                 stdio: true
-                http: true
+                http: false
 
             http:
                 path: /mcp
+
+when@test:
+    mcp:
+        servers:
+            default:
+                transports:
+                    http: true

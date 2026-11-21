@@ -6,6 +6,7 @@ namespace App\Workout\Mcp;
 
 use App\Workout\WorkoutRepository;
 use Mcp\Capability\Attribute\McpTool;
+use Mcp\Capability\Attribute\Schema;
 use Mcp\Schema\ToolAnnotations;
 
 #[McpTool(
@@ -25,6 +26,7 @@ final readonly class ListWorkoutsTool
     /**
      * @return array{workouts: list<WorkoutSummary>}
      */
+    #[Schema(additionalProperties: false)]
     public function __invoke(): array
     {
         return WorkoutSummary::listOf($this->workouts->all());

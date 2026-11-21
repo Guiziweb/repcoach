@@ -7,6 +7,7 @@ namespace App\Session\Mcp;
 use App\Session\Action\AbortSession;
 use App\Shared\Mcp\RefusesPolitely;
 use Mcp\Capability\Attribute\McpTool;
+use Mcp\Capability\Attribute\Schema;
 use Mcp\Schema\ToolAnnotations;
 use Psr\Clock\ClockInterface;
 
@@ -27,6 +28,7 @@ final readonly class AbortSessionTool
     ) {
     }
 
+    #[Schema(additionalProperties: false)]
     public function __invoke(): SessionSummary
     {
         return $this->refusing(fn (): SessionSummary => SessionSummary::of(($this->abort)(), $this->clock->now()));

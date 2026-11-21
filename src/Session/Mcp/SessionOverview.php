@@ -12,14 +12,16 @@ final readonly class SessionOverview
 {
     public const array SCHEMA = [
         'type' => 'object',
-        'required' => ['id', 'workout', 'startedAt', 'status', 'durationSeconds', 'volume', 'sets'],
+        'required' => ['id', 'workout', 'startedAt', 'status', 'durationSeconds', 'volume', 'reps', 'timedSeconds', 'sets'],
         'properties' => [
             'id' => ['type' => 'integer'],
             'workout' => ['type' => 'string'],
             'startedAt' => ['type' => 'string'],
             'status' => ['type' => 'string', 'enum' => [SessionStatus::Running->value, SessionStatus::Paused->value, SessionStatus::Finished->value, SessionStatus::Aborted->value]],
             'durationSeconds' => ['type' => 'integer', 'description' => 'Seconds spent training, pauses excluded'],
-            'volume' => ['type' => 'number', 'description' => 'Kilograms lifted: repetitions times weight, summed over the sets'],
+            'volume' => ['type' => 'number', 'description' => 'Kilograms lifted: repetitions times weight, summed over the sets. Bodyweight sets add nothing here, see reps and timedSeconds'],
+            'reps' => ['type' => 'integer', 'description' => 'Repetitions summed over the sets, bodyweight ones included'],
+            'timedSeconds' => ['type' => 'integer', 'description' => 'Seconds of timed sets (planks, holds) summed over the sets'],
             'sets' => ['type' => 'integer'],
         ],
     ];
@@ -31,6 +33,8 @@ final readonly class SessionOverview
         public string $status,
         public int $durationSeconds,
         public float $volume,
+        public int $reps,
+        public int $timedSeconds,
         public int $sets,
     ) {
     }
@@ -46,6 +50,8 @@ final readonly class SessionOverview
             $session->getStatus()->value,
             $session->durationInSeconds($now),
             $tally->volume,
+            $tally->reps,
+            $tally->timedSeconds,
             $tally->sets,
         );
     }

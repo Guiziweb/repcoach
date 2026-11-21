@@ -29,9 +29,10 @@ final readonly class ChangeSetTool
     ) {
     }
 
+    #[Schema(additionalProperties: false)]
     public function __invoke(
         #[Schema(description: 'Id of the set, as shown by show_session or current_session', minimum: 1)]
-        int $set,
+        int $setId,
         #[Schema(description: 'Repetitions performed. Omit both reps and seconds to keep the effort as it is', minimum: 1, maximum: Limits::MAX_REPS)]
         ?int $reps = null,
         #[Schema(description: 'Seconds held, for planks and stretches. Omit both reps and seconds to keep the effort as it is', minimum: 1, maximum: Limits::MAX_SECONDS)]
@@ -39,6 +40,6 @@ final readonly class ChangeSetTool
         #[Schema(description: 'Load in kilograms. Omit it to keep the current load. Give 0 to remove the load from a bodyweight exercise', minimum: 0, maximum: Limits::MAX_WEIGHT)]
         ?float $weight = null,
     ): SessionSummary {
-        return $this->refusing(fn (): SessionSummary => SessionSummary::of(($this->change)($set, $reps, $seconds, $weight), $this->clock->now()));
+        return $this->refusing(fn (): SessionSummary => SessionSummary::of(($this->change)($setId, $reps, $seconds, $weight), $this->clock->now()));
     }
 }

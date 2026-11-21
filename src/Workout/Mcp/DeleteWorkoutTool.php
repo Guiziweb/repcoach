@@ -31,6 +31,7 @@ final readonly class DeleteWorkoutTool
     /**
      * @return array{workouts: list<WorkoutSummary>}
      */
+    #[Schema(additionalProperties: false)]
     public function __invoke(
         #[Schema(description: 'Name of the workout to remove')]
         string $workout,

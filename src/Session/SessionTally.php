@@ -10,6 +10,8 @@ final readonly class SessionTally
         public WorkoutSession $session,
         public int $sets,
         public float $volume,
+        public int $reps,
+        public int $timedSeconds,
     ) {
     }
 }

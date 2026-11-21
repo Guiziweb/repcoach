@@ -1,10 +1,13 @@
-.PHONY: install migrate cs cs-fix lint stan test ci
+.PHONY: install migrate import cs cs-fix lint stan test ci
 
 install:
 	composer install
 
 migrate:
 	php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+
+import:
+	php bin/console app:import-exercises
 
 cs:
 	vendor/bin/php-cs-fixer check --diff

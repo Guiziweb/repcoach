@@ -1,4 +1,4 @@
-.PHONY: install migrate cs cs-fix lint stan test
+.PHONY: install migrate cs cs-fix lint stan test ci
 
 install:
 	composer install
@@ -23,3 +23,5 @@ stan:
 
 test:
 	vendor/bin/phpunit
+
+ci: cs lint stan test

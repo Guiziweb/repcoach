@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Session\Mcp;
 
 use App\Exercise\ExerciseRepository;
+use App\Session\PerformedSetRepository;
 use App\Session\WorkoutSessionRepository;
 use App\Shared\Limits;
 use App\Tests\ExerciseFixture;
@@ -50,11 +51,14 @@ final class SessionToolsTest extends KernelTestCase
         $workouts = self::getContainer()->get(WorkoutRepository::class);
         self::assertInstanceOf(WorkoutRepository::class, $workouts);
 
+        $sets = self::getContainer()->get(PerformedSetRepository::class);
+        self::assertInstanceOf(PerformedSetRepository::class, $sets);
+
         $exercises = self::getContainer()->get(ExerciseRepository::class);
         self::assertInstanceOf(ExerciseRepository::class, $exercises);
 
         $this->clock = new MockClock('2026-10-27 10:00:00');
-        $this->kit = new Kit($entityManager, $sessions, $workouts, $exercises, $this->clock, self::getContainer()->get('state_machine.session'));
+        $this->kit = new Kit($entityManager, $sessions, $workouts, $sets, $exercises, $this->clock, self::getContainer()->get('state_machine.session'));
     }
 
     public function testItStartsASession(): void
@@ -477,6 +481,14 @@ final class SessionToolsTest extends KernelTestCase
         $corrected = ($this->kit->updateSession)($finished->id, durationMinutes: 40);
 
         self::assertSame(2400, $corrected->durationSeconds);
+    }
+
+    public function testAnUnknownSetIsRefusedWithAWayOut(): void
+    {
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('No set with id 999. Use show_session');
+
+        ($this->kit->changeSet)(999, reps: 5);
     }
 
     private function workoutKit(WorkoutRepository $workouts): WorkoutKit

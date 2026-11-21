@@ -7,6 +7,7 @@ namespace App\Tests\Session\Mcp;
 use App\Exercise\ExerciseRepository;
 use App\Session\ClosedStatus;
 use App\Session\Mcp\SessionSummary;
+use App\Session\PerformedSetRepository;
 use App\Session\WorkoutSessionRepository;
 use App\Shared\Limits;
 use App\Tests\ExerciseFixture;
@@ -43,6 +44,7 @@ final class HistoryToolsTest extends KernelTestCase
 
         $bench = ExerciseFixture::exercise();
         $entityManager->persist($bench);
+        $entityManager->persist(ExerciseFixture::exercise(id: 'pull-up', name: 'Pull-Up', bodyweight: true));
         $entityManager->persist(ExerciseFixture::workout(exercise: $bench));
         $entityManager->flush();
 
@@ -52,11 +54,14 @@ final class HistoryToolsTest extends KernelTestCase
         $workouts = self::getContainer()->get(WorkoutRepository::class);
         self::assertInstanceOf(WorkoutRepository::class, $workouts);
 
+        $sets = self::getContainer()->get(PerformedSetRepository::class);
+        self::assertInstanceOf(PerformedSetRepository::class, $sets);
+
         $exercises = self::getContainer()->get(ExerciseRepository::class);
         self::assertInstanceOf(ExerciseRepository::class, $exercises);
 
         $this->clock = new MockClock('2026-10-27 10:00:00');
-        $this->kit = new Kit($entityManager, $sessions, $workouts, $exercises, $this->clock, self::getContainer()->get('state_machine.session'));
+        $this->kit = new Kit($entityManager, $sessions, $workouts, $sets, $exercises, $this->clock, self::getContainer()->get('state_machine.session'));
     }
 
     public function testAnAbortedSessionCanBeFoundToo(): void
@@ -360,6 +365,106 @@ final class HistoryToolsTest extends KernelTestCase
         self::assertSame(8, $completed->sets[1]->reps);
         self::assertSame(60.0, $completed->sets[1]->weight);
         self::assertSame(2, $completed->planned[0]->done);
+    }
+
+    public function testARefusedSetCorrectionLeavesTheSetUntouched(): void
+    {
+        $done = $this->performed();
+
+        try {
+            ($this->kit->changeSet)($done->sets[0]->id, reps: Limits::MAX_REPS + 1, weight: 65.0);
+            self::fail('Too many repetitions should be refused.');
+        } catch (ToolCallException) {
+        }
+
+        $reloaded = ($this->kit->showSession)($done->id);
+        self::assertSame($done->sets[0]->reps, $reloaded->sets[0]->reps);
+    }
+
+    public function testChangingTheRepsKeepsTheWeight(): void
+    {
+        $done = $this->performed();
+
+        $corrected = ($this->kit->changeSet)($done->sets[0]->id, reps: 7);
+
+        self::assertSame(7, $corrected->sets[0]->reps);
+        self::assertSame(60.0, $corrected->sets[0]->weight);
+    }
+
+    public function testChangingTheWeightKeepsTheReps(): void
+    {
+        $done = $this->performed();
+
+        $corrected = ($this->kit->changeSet)($done->sets[0]->id, weight: 70.0);
+
+        self::assertSame($done->sets[0]->reps, $corrected->sets[0]->reps);
+        self::assertSame(70.0, $corrected->sets[0]->weight);
+    }
+
+    public function testZeroRemovesTheLoadFromABodyweightSet(): void
+    {
+        ($this->kit->start)('Pecs');
+        $logged = ($this->kit->logSet)(exercise: 'pull-up', reps: 10, weight: 20.0);
+        $sets = $logged->sets;
+        $set = end($sets);
+        self::assertNotFalse($set);
+        self::assertSame(20.0, $set->weight);
+
+        $corrected = ($this->kit->changeSet)($set->id, weight: 0.0);
+        $changedSets = $corrected->sets;
+        $changed = end($changedSets);
+        self::assertNotFalse($changed);
+
+        self::assertNull($changed->weight);
+        self::assertSame(10, $changed->reps);
+    }
+
+    public function testGivingSecondsReplacesTheRepsOfASet(): void
+    {
+        ($this->kit->start)('Pecs');
+        $logged = ($this->kit->logSet)(exercise: 'pull-up', reps: 10);
+        $sets = $logged->sets;
+        $set = end($sets);
+        self::assertNotFalse($set);
+
+        $corrected = ($this->kit->changeSet)($set->id, seconds: 30);
+        $changedSets = $corrected->sets;
+        $changed = end($changedSets);
+        self::assertNotFalse($changed);
+
+        self::assertNull($changed->reps);
+        self::assertSame(30, $changed->seconds);
+    }
+
+    public function testItRefusesACorrectionThatChangesNothingInASet(): void
+    {
+        $done = $this->performed();
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('nothing to change');
+
+        ($this->kit->changeSet)($done->sets[0]->id);
+    }
+
+    public function testItRewritesASet(): void
+    {
+        $done = $this->performed();
+
+        $corrected = ($this->kit->changeSet)($done->sets[0]->id, reps: 6, weight: 65.0);
+
+        self::assertSame(6, $corrected->sets[0]->reps);
+        self::assertSame(65.0, $corrected->sets[0]->weight);
+        self::assertSame(390.0, $corrected->volume);
+    }
+
+    public function testItRefusesASetWithRepsAndSeconds(): void
+    {
+        $done = $this->performed();
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('not both');
+
+        ($this->kit->changeSet)($done->sets[0]->id, reps: 8, seconds: 45);
     }
 
     private function performed(int $seconds = 60): SessionSummary

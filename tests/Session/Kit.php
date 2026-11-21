@@ -18,6 +18,7 @@ use App\Session\Mcp\ListSessionsTool;
 use App\Session\Mcp\LogSetTool;
 use App\Session\Mcp\PauseSessionTool;
 use App\Session\Mcp\ResumeSessionTool;
+use App\Session\Mcp\ShowSessionTool;
 use App\Session\Mcp\StartSessionTool;
 use App\Session\WorkoutSessionRepository;
 use App\Tests\Checker;
@@ -44,6 +45,8 @@ final readonly class Kit
 
     public ListSessionsTool $listSessions;
 
+    public ShowSessionTool $showSession;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         WorkoutSessionRepository $sessions,
@@ -62,5 +65,6 @@ final readonly class Kit
         $this->abort = new AbortSessionTool(new AbortSession($entityManager, $sessions, $clock, $workflow), $clock);
         $this->finish = new FinishSessionTool(new FinishSession($entityManager, $sessions, $clock, $workflow, $check), $clock);
         $this->listSessions = new ListSessionsTool($sessions, $check, $clock);
+        $this->showSession = new ShowSessionTool($sessions, $clock);
     }
 }

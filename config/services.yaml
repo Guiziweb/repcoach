@@ -7,4 +7,5 @@ services:
         resource: '../src/'
         exclude:
             - '../src/Kernel.php'
+            - '../src/Exercise/Enum/'
             - '../src/Shared/{Effort,ExerciseEffort,PlannedEffort,Limits,Minutes,NotFound,Reason,Refused}.php'

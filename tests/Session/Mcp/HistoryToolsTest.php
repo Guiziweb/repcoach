@@ -7,7 +7,9 @@ namespace App\Tests\Session\Mcp;
 use App\Exercise\ExerciseRepository;
 use App\Session\ClosedStatus;
 use App\Session\Mcp\SessionSummary;
+use App\Session\PerformedSet;
 use App\Session\PerformedSetRepository;
+use App\Session\WorkoutSession;
 use App\Session\WorkoutSessionRepository;
 use App\Shared\Limits;
 use App\Tests\ExerciseFixture;
@@ -475,6 +477,26 @@ final class HistoryToolsTest extends KernelTestCase
 
         self::assertSame([], $emptied->sets);
         self::assertSame(0, $emptied->planned[0]->done);
+    }
+
+    public function testItDeletesASessionWithItsSets(): void
+    {
+        $done = $this->performed();
+
+        self::assertSame(['deleted' => $done->id], ($this->kit->deleteSession)($done->id));
+
+        self::assertSame(0, $this->entityManager->getRepository(WorkoutSession::class)->count([]));
+        self::assertSame(0, $this->entityManager->getRepository(PerformedSet::class)->count([]));
+    }
+
+    public function testItRefusesToDeleteASessionStillOpen(): void
+    {
+        $open = ($this->kit->start)('Pecs');
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('abort_session');
+
+        ($this->kit->deleteSession)($open->id);
     }
 
     private function performed(int $seconds = 60): SessionSummary

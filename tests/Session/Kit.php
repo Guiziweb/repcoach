@@ -8,6 +8,7 @@ use App\Exercise\ExerciseRepository;
 use App\Session\Action\AbortSession;
 use App\Session\Action\AddSet;
 use App\Session\Action\ChangeSet;
+use App\Session\Action\DeleteSession;
 use App\Session\Action\FinishSession;
 use App\Session\Action\LogSet;
 use App\Session\Action\PauseSession;
@@ -19,6 +20,7 @@ use App\Session\Mcp\AbortSessionTool;
 use App\Session\Mcp\AddSetTool;
 use App\Session\Mcp\ChangeSetTool;
 use App\Session\Mcp\CurrentSessionTool;
+use App\Session\Mcp\DeleteSessionTool;
 use App\Session\Mcp\FinishSessionTool;
 use App\Session\Mcp\ListSessionsTool;
 use App\Session\Mcp\LogSetTool;
@@ -64,6 +66,8 @@ final readonly class Kit
 
     public RemoveSetTool $removeSet;
 
+    public DeleteSessionTool $deleteSession;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         WorkoutSessionRepository $sessions,
@@ -85,6 +89,7 @@ final readonly class Kit
         $this->listSessions = new ListSessionsTool($sessions, $check, $clock);
         $this->showSession = new ShowSessionTool($sessions, $clock);
         $this->changeSet = new ChangeSetTool(new ChangeSet($entityManager, $sets, $check), $clock);
+        $this->deleteSession = new DeleteSessionTool(new DeleteSession($entityManager, $sessions));
         $this->removeSet = new RemoveSetTool(new RemoveSet($entityManager, $sets), $clock);
         $this->addSet = new AddSetTool(new AddSet($entityManager, $sessions, $clock, $check), $clock);
         $this->updateSession = new UpdateSessionTool(new UpdateSession($entityManager, $sessions, $check, $clock), $check, $clock);

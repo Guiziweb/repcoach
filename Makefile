@@ -1,4 +1,4 @@
-.PHONY: install migrate cs cs-fix stan test
+.PHONY: install migrate cs cs-fix lint stan test
 
 install:
 	composer install
@@ -11,6 +11,11 @@ cs:
 
 cs-fix:
 	vendor/bin/php-cs-fixer fix
+
+lint:
+	php bin/console lint:yaml config --no-interaction
+	php bin/console lint:container --no-interaction
+	php bin/console doctrine:schema:validate --skip-sync --no-interaction
 
 stan:
 	php bin/console cache:warmup --env=dev --quiet

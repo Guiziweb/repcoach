@@ -1,4 +1,4 @@
-.PHONY: install migrate cs cs-fix
+.PHONY: install migrate cs cs-fix stan
 
 install:
 	composer install
@@ -11,3 +11,7 @@ cs:
 
 cs-fix:
 	vendor/bin/php-cs-fixer fix
+
+stan:
+	php bin/console cache:warmup --env=dev --quiet
+	vendor/bin/phpstan analyse --no-progress

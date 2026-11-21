@@ -29,6 +29,7 @@ make install   composer install
 make migrate   run the database migrations
 make cs        check code style
 make cs-fix    fix code style
+make lint      Symfony checks: YAML syntax, container wiring, Doctrine mapping
 make stan      PHPStan, level max
 make test      PHPUnit
 ```

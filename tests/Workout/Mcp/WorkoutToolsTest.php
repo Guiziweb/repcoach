@@ -373,6 +373,44 @@ final class WorkoutToolsTest extends KernelTestCase
         ($this->kit->renameWorkout)('Pecs', '   ');
     }
 
+    public function testItDuplicatesAWorkoutWithItsExercises(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+        ($this->kit->planExercise)('Pecs', 'bench-press', sets: 4, reps: 8, weight: 60.0);
+        ($this->kit->planExercise)('Pecs', 'plank', sets: 3, seconds: 45);
+
+        $listed = ($this->kit->duplicateWorkout)('Pecs', 'Pecs lourd')['workouts'];
+
+        self::assertSame(['Pecs', 'Pecs lourd'], array_map(static fn (WorkoutSummary $w): string => $w->name, $listed));
+
+        $copy = ($this->kit->showWorkout)('Pecs lourd');
+        self::assertSame([1, 2], $this->positions($copy));
+        self::assertSame('Barbell Bench Press', $copy->exercises[0]->exercise);
+        self::assertSame(45, $copy->exercises[1]->seconds);
+    }
+
+    public function testTheCopyIsIndependentFromItsSource(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+        ($this->kit->planExercise)('Pecs', 'bench-press', sets: 4, reps: 8, weight: 60.0);
+        ($this->kit->duplicateWorkout)('Pecs', 'Pecs lourd');
+
+        ($this->kit->changeExercise)('Pecs lourd', position: 1, sets: 5, reps: 5, weight: 80.0);
+
+        self::assertSame(4, ($this->kit->showWorkout)('Pecs')->exercises[0]->sets);
+        self::assertSame(5, ($this->kit->showWorkout)('Pecs lourd')->exercises[0]->sets);
+    }
+
+    public function testItRefusesToDuplicateAWorkoutUnderItsOwnName(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('already exists');
+
+        ($this->kit->duplicateWorkout)('Pecs', 'Pecs');
+    }
+
     protected function tearDown(): void
     {
         $this->entityManager->clear();

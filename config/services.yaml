@@ -8,4 +8,5 @@ services:
         exclude:
             - '../src/Kernel.php'
             - '../src/Exercise/Enum/'
+            - '../src/Exercise/Exercise.php'
             - '../src/Shared/{Effort,ExerciseEffort,PlannedEffort,Limits,Minutes,NotFound,Reason,Refused}.php'

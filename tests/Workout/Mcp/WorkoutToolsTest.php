@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Workout\Mcp;
 
+use App\Exercise\ExerciseRepository;
 use App\Shared\Limits;
+use App\Tests\ExerciseFixture;
 use App\Tests\Workout\Kit;
 use App\Workout\Mcp\WorkoutSummary;
 use App\Workout\WorkoutRepository;
@@ -32,10 +34,17 @@ final class WorkoutToolsTest extends KernelTestCase
         $schema->dropSchema($metadata);
         $schema->createSchema($metadata);
 
+        $entityManager->persist(ExerciseFixture::exercise());
+        $entityManager->persist(ExerciseFixture::exercise(id: 'plank', name: 'Plank', bodyweight: true));
+        $entityManager->flush();
+
         $workouts = self::getContainer()->get(WorkoutRepository::class);
         self::assertInstanceOf(WorkoutRepository::class, $workouts);
 
-        $this->kit = new Kit($entityManager, $workouts);
+        $exercises = self::getContainer()->get(ExerciseRepository::class);
+        self::assertInstanceOf(ExerciseRepository::class, $exercises);
+
+        $this->kit = new Kit($entityManager, $workouts, $exercises);
     }
 
     public function testItCreatesAnEmptyWorkout(): void
@@ -113,6 +122,56 @@ final class WorkoutToolsTest extends KernelTestCase
 
         self::assertSame('Pecs', $workout->name);
         self::assertSame('Pecs', ($this->kit->showWorkout)('Pecs')->name);
+    }
+
+    public function testItAppendsExercisesInOrder(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+        ($this->kit->planExercise)('Pecs', 'bench-press', sets: 4, reps: 8, weight: 60.0);
+        $workout = ($this->kit->planExercise)('Pecs', 'plank', sets: 3, seconds: 45);
+
+        $exercises = $workout->exercises;
+        self::assertCount(2, $exercises);
+        self::assertSame('Barbell Bench Press', $exercises[0]->exercise);
+        self::assertSame(45, $exercises[1]->seconds);
+    }
+
+    public function testItRefusesToPlanBeyondTheLimits(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('Sets must be between');
+
+        ($this->kit->planExercise)('Pecs', 'bench-press', sets: Limits::MAX_SETS + 1, reps: 8);
+    }
+
+    public function testItRefusesToPlanOnAnUnknownWorkout(): void
+    {
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('list_workouts');
+
+        ($this->kit->planExercise)('Jambes', 'bench-press', sets: 4, reps: 8);
+    }
+
+    public function testItRefusesAnUnknownExercise(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('search_exercises');
+
+        ($this->kit->planExercise)('Pecs', 'does-not-exist', sets: 4, reps: 8);
+    }
+
+    public function testItRefusesAnExerciseWithNeitherRepsNorSeconds(): void
+    {
+        ($this->kit->createWorkout)('Pecs');
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('either repetitions or a duration');
+
+        ($this->kit->planExercise)('Pecs', 'bench-press', sets: 4);
     }
 
     protected function tearDown(): void

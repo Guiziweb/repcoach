@@ -27,6 +27,8 @@ Always use the Makefile, never the underlying tools directly.
 ```
 make install   composer install
 make migrate   run the database migrations
+make cs        check code style
+make cs-fix    fix code style
 ```
 
 ## Commits

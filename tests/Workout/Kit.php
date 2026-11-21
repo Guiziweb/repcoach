@@ -10,11 +10,13 @@ use App\Workout\Action\ChangeExercise;
 use App\Workout\Action\CreateWorkout;
 use App\Workout\Action\MoveExercise;
 use App\Workout\Action\PlanExercise;
+use App\Workout\Action\RemoveExercise;
 use App\Workout\Mcp\ChangeExerciseTool;
 use App\Workout\Mcp\CreateWorkoutTool;
 use App\Workout\Mcp\ListWorkoutsTool;
 use App\Workout\Mcp\MoveExerciseTool;
 use App\Workout\Mcp\PlanExerciseTool;
+use App\Workout\Mcp\RemoveExerciseTool;
 use App\Workout\Mcp\ShowWorkoutTool;
 use App\Workout\WorkoutNames;
 use App\Workout\WorkoutRepository;
@@ -32,6 +34,8 @@ final readonly class Kit
 
     public ChangeExerciseTool $changeExercise;
 
+    public RemoveExerciseTool $removeExercise;
+
     public MoveExerciseTool $moveExercise;
 
     public function __construct(
@@ -47,6 +51,7 @@ final readonly class Kit
         $this->createWorkout = new CreateWorkoutTool(new CreateWorkout($entityManager, $names));
         $this->planExercise = new PlanExerciseTool(new PlanExercise($entityManager, $workouts, $exercises, $check));
         $this->changeExercise = new ChangeExerciseTool(new ChangeExercise($entityManager, $workouts, $check));
+        $this->removeExercise = new RemoveExerciseTool(new RemoveExercise($entityManager, $workouts));
         $this->moveExercise = new MoveExerciseTool(new MoveExercise($entityManager, $workouts));
     }
 }

@@ -54,7 +54,7 @@ final class SessionToolsTest extends KernelTestCase
         self::assertInstanceOf(ExerciseRepository::class, $exercises);
 
         $this->clock = new MockClock('2026-10-27 10:00:00');
-        $this->kit = new Kit($entityManager, $sessions, $workouts, $exercises, $this->clock);
+        $this->kit = new Kit($entityManager, $sessions, $workouts, $exercises, $this->clock, self::getContainer()->get('state_machine.session'));
     }
 
     public function testItStartsASession(): void
@@ -312,6 +312,67 @@ final class SessionToolsTest extends KernelTestCase
         self::assertSame('', $summary->workout);
         self::assertSame([], $summary->planned);
         self::assertSame([], $summary->sets);
+    }
+
+    public function testAPausedSessionStopsTheClockAndRefusesSets(): void
+    {
+        ($this->kit->start)('Pecs');
+        $this->clock->sleep(600);
+        $summary = ($this->kit->pause)();
+
+        self::assertSame('paused', $summary->status);
+
+        $this->clock->sleep(1800);
+        self::assertSame(600, ($this->kit->current)()->durationSeconds);
+
+        $this->expectException(ToolCallException::class);
+        $this->expectExceptionMessageIsOrContains('paused');
+
+        ($this->kit->logSet)(position: 1, reps: 8);
+    }
+
+    public function testResumingLetsTheSessionGoOnWithoutCountingThePause(): void
+    {
+        ($this->kit->start)('Pecs');
+        $this->clock->sleep(600);
+        ($this->kit->pause)();
+        $this->clock->sleep(1800);
+        ($this->kit->resume)();
+        $this->clock->sleep(300);
+
+        $summary = ($this->kit->logSet)(position: 1, reps: 8, weight: 60.0);
+
+        self::assertSame('running', $summary->status);
+        self::assertSame(900, $summary->durationSeconds);
+    }
+
+    public function testPausingTwiceKeepsTheFirstPause(): void
+    {
+        ($this->kit->start)('Pecs');
+        $this->clock->sleep(600);
+        ($this->kit->pause)();
+        $this->clock->sleep(600);
+        $again = ($this->kit->pause)();
+        $this->clock->sleep(600);
+
+        self::assertSame('paused', $again->status);
+        self::assertSame(600, ($this->kit->current)()->durationSeconds);
+
+        ($this->kit->resume)();
+        $this->clock->sleep(300);
+
+        self::assertSame(900, ($this->kit->current)()->durationSeconds);
+    }
+
+    public function testResumingARunningSessionChangesNothing(): void
+    {
+        ($this->kit->start)('Pecs');
+        $this->clock->sleep(600);
+
+        $resumed = ($this->kit->resume)();
+
+        self::assertSame('running', $resumed->status);
+        self::assertSame(600, $resumed->durationSeconds);
     }
 
     private function workoutKit(WorkoutRepository $workouts): WorkoutKit

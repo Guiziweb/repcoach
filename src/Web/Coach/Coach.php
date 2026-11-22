@@ -34,14 +34,24 @@ final readonly class Coach
         private Destination $destination,
         private LoggerInterface $logger,
         private DailyTokens $daily,
-        #[Autowire(param: 'app.coach.max_context')]
-        private int $maxContext,
     ) {
     }
 
     public function reply(string $message, string $screen): Reply
     {
-        return $this->pause() ?? $this->answer($screen, Message::ofUser($message));
+        $pause = $this->pause();
+
+        if (null !== $pause) {
+            return $pause;
+        }
+
+        if (!$this->meter->full()) {
+            return $this->answer($screen, Message::ofUser($message));
+        }
+
+        $this->forget();
+
+        return $this->answer($screen, Message::ofUser($message))->startingWith($this->translator->trans('buddy.fresh'));
     }
 
     public function confirm(string $id, string $screen): Reply
@@ -99,13 +109,11 @@ final readonly class Coach
 
     private function pause(): ?Reply
     {
-        $reason = match (true) {
-            $this->meter->context() >= $this->maxContext => 'buddy.full',
-            !$this->daily->left() => 'buddy.resting',
-            default => null,
-        };
+        if ($this->daily->left()) {
+            return null;
+        }
 
-        return null === $reason ? null : new Reply($this->translator->trans($reason), [], null, null, false, null);
+        return new Reply($this->translator->trans('buddy.resting'), [], null, null, false, null);
     }
 
     public function forget(): void

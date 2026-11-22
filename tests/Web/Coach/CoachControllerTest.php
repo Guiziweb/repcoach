@@ -106,15 +106,17 @@ final class CoachControllerTest extends WebTestCase
         self::assertStringNotContainsString('Junk', $this->coach()->lastHeard());
     }
 
-    public function testAFullMemoryAsksForAFreshConversationWithoutCallingTheModel(): void
+    public function testAFullMemoryStartsAFreshConversationAndStillAnswers(): void
     {
         $this->coach()->answers(self::usingContext(50_000));
-        $this->ask('hello');
+        $this->ask('my name is Ada');
 
         $this->ask('and now?');
 
-        self::assertStringContainsString('my memory is full', (string) $this->browser->getResponse()->getContent());
-        self::assertStringNotContainsString('and now?', $this->coach()->lastHeard());
+        $answer = (string) $this->browser->getResponse()->getContent();
+        self::assertStringContainsString('My memory was full, so I am starting over. '.ScriptedCoach::DEFAULT_ANSWER, $answer);
+        self::assertStringContainsString('and now?', $this->coach()->lastHeard());
+        self::assertStringNotContainsString('Ada', $this->coach()->lastHeard());
     }
 
     public function testForgettingFreesTheMemory(): void

@@ -24,7 +24,7 @@ final class TokenMeterTest extends TestCase
         $requests = new RequestStack();
         $requests->push($request);
 
-        $this->meter = new TokenMeter($requests);
+        $this->meter = new TokenMeter($requests, 10_000);
     }
 
     public function testTheContextCountsTheCachedAndTheFreshTokens(): void
@@ -63,20 +63,31 @@ final class TokenMeterTest extends TestCase
         self::assertSame(220, $this->meter->measure(new TokenUsage(promptTokens: 200, completionTokens: 20))?->conversation);
     }
 
-    public function testItRemembersTheContextOfTheLastAnswer(): void
+    public function testTheMemoryIsTheShareOfTheLastContextInTheCeiling(): void
     {
-        $this->meter->measure(new TokenUsage(promptTokens: 100, cacheReadTokens: 900));
-        $this->meter->measure(new TokenUsage(promptTokens: 300, cacheReadTokens: 1_700));
-
-        self::assertSame(2_000, $this->meter->context());
+        self::assertSame(27, $this->meter->measure(new TokenUsage(promptTokens: 200, cacheReadTokens: 2_500))?->memory);
     }
 
-    public function testForgettingEmptiesTheContext(): void
+    public function testTheMemoryStopsAtAFullBar(): void
     {
-        $this->meter->measure(new TokenUsage(promptTokens: 100));
+        self::assertSame(100, $this->meter->measure(new TokenUsage(promptTokens: 14_000))?->memory);
+    }
+
+    public function testTheMemoryIsFullOnceTheLastContextReachesTheCeiling(): void
+    {
+        $this->meter->measure(new TokenUsage(promptTokens: 9_999));
+        self::assertFalse($this->meter->full());
+
+        $this->meter->measure(new TokenUsage(promptTokens: 10_000));
+        self::assertTrue($this->meter->full());
+    }
+
+    public function testForgettingEmptiesTheMemory(): void
+    {
+        $this->meter->measure(new TokenUsage(promptTokens: 10_000));
         $this->meter->reset();
 
-        self::assertSame(0, $this->meter->context());
+        self::assertFalse($this->meter->full());
     }
 
     public function testNothingIsMeasuredWithoutAUsage(): void

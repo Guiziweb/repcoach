@@ -7,7 +7,7 @@ buddy:
     confirm: 'Confirmer : {action}'
     confirmed: "J'ai appuyé sur le bouton."
     expired: Cette demande n'est plus valable. Redis-moi ce que tu veux faire.
-    full: On a beaucoup parlé, ma mémoire est pleine. Appuie sur ↺ pour repartir sur une nouvelle conversation.
+    fresh: Ma mémoire était pleine, je repars de zéro.
     resting: "J'ai beaucoup coaché aujourd'hui, je dois me reposer. Reviens demain !"
 menu:
     language: Langue
@@ -28,10 +28,7 @@ programs:
     none: Pas encore de programme. Demande-moi d'en construire un.
     empty: Ce programme est vide. Dis-moi quoi ajouter.
 hud:
-    context: contexte
-    cached: 'dont {tokens} en cache'
-    reply: réponse
-    total: total
+    memory: mémoire
     forget: Recommencer
 sessions:
     title: Mes séances

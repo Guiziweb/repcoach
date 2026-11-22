@@ -6,6 +6,7 @@ namespace App\Web\Coach;
 
 use Symfony\AI\Platform\TokenUsage\TokenUsageAggregation;
 use Symfony\AI\Platform\TokenUsage\TokenUsageInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final readonly class TokenMeter
@@ -16,6 +17,8 @@ final readonly class TokenMeter
 
     public function __construct(
         private RequestStack $requests,
+        #[Autowire(param: 'app.coach.max_context')]
+        private int $maxContext,
     ) {
     }
 
@@ -31,20 +34,25 @@ final readonly class TokenMeter
         $context = false === $last ? 0 : self::read($last);
         $this->requests->getSession()->set(self::CONTEXT, $context);
 
-        return new Consumption($context, $reply, $usage->getCacheReadTokens() ?? 0, $this->add($reply));
+        return new Consumption($context, $reply, $usage->getCacheReadTokens() ?? 0, $this->add($reply), $this->memory($context));
     }
 
-    public function context(): int
+    public function full(): bool
     {
         $context = $this->requests->getSession()->get(self::CONTEXT, 0);
 
-        return \is_int($context) ? $context : 0;
+        return \is_int($context) && $context >= $this->maxContext;
     }
 
     public function reset(): void
     {
         $this->requests->getSession()->remove(self::TOTAL);
         $this->requests->getSession()->remove(self::CONTEXT);
+    }
+
+    private function memory(int $context): int
+    {
+        return min(100, intdiv($context * 100, $this->maxContext));
     }
 
     private function add(int $tokens): int

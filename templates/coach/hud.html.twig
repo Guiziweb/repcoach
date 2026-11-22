@@ -1,8 +1,10 @@
 <div class="hud" id="hud">
     {% if consumption %}
-        <span>{{ 'hud.context'|trans }} <b>{{ consumption.context|format_number }}</b></span>
-        <span title="{{ 'hud.cached'|trans({tokens: consumption.cached|format_number}) }}">{{ 'hud.reply'|trans }} <b>{{ consumption.reply|format_number }}</b></span>
-        <span>{{ 'hud.total'|trans }} <b>{{ consumption.conversation|format_number }}</b></span>
+        <span class="memory{{ consumption.memory >= 80 ? ' is-high' }}" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ consumption.memory }}" aria-label="{{ 'hud.memory'|trans }}">
+            {{ 'hud.memory'|trans }}
+            <span class="gauge"><span class="gauge-fill" style="width: {{ consumption.memory }}%"></span></span>
+            <b>{{ (consumption.memory / 100)|format_number(style: 'percent') }}</b>
+        </span>
     {% endif %}
     <form action="{{ path('coach_forget') }}" method="post">
         <input type="hidden" name="_token" value="{{ csrf_token('coach') }}">

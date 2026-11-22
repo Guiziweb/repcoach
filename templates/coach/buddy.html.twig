@@ -1,9 +1,10 @@
 <aside class="buddy" id="buddy" data-turbo-permanent
-       data-controller="ask" data-ask-figure-outlet=".figure"
+       data-controller="ask help" data-ask-figure-outlet=".figure"
        data-ask-failed-value="{{ 'buddy.failed'|trans }}" data-ask-slow-value="{{ 'buddy.slow'|trans }}"
        data-ask-busy-class="is-busy" data-ask-open-class="is-open"
-       data-action="click@document->ask#dismiss touchmove@document->ask#dismiss">
+       data-action="click@document->ask#dismiss touchmove@document->ask#dismiss keydown.esc@window->help#close">
     {{ include('coach/hud.html.twig', {consumption: null}) }}
+    {{ include('coach/help.html.twig') }}
     <div class="bubble-slot" aria-live="polite">
         {{ include('coach/bubble.html.twig', {say: 'buddy.greeting'|trans}) }}
     </div>
@@ -13,7 +14,8 @@
           data-action="submit->ask#send turbo:submit-start->ask#start turbo:before-fetch-response->ask#guard turbo:submit-end->ask#end">
         <input type="hidden" name="_token" value="{{ csrf_token('coach') }}">
         <input type="hidden" name="screen" data-ask-target="screen">
+        <button type="button" class="help-toggle is-phone" aria-label="{{ 'help.open'|trans }}" data-action="help#toggle">?</button>
         <input name="message" placeholder="{{ 'buddy.placeholder'|trans }}" aria-label="{{ 'buddy.placeholder'|trans }}" autocomplete="off" required pattern=".*\S.*" data-ask-target="input" data-action="focus->ask#close input->ask#close">
-        <button aria-label="{{ 'buddy.send'|trans }}">↑</button>
+        <button class="send" aria-label="{{ 'buddy.send'|trans }}">↑</button>
     </form>
 </aside>

@@ -261,7 +261,7 @@
     background: transparent;
 }
 
-.ask button {
+.ask .send {
     padding: 7px 14px;
     border: 0;
     border-radius: 16px;
@@ -280,7 +280,139 @@
     display: none;
 }
 
+.help-toggle {
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: white;
+    color: var(--ink);
+    font: inherit;
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.help-toggle.is-phone {
+    display: none;
+}
+
+.help {
+    position: absolute;
+    z-index: 3;
+    top: 48px;
+    left: 6%;
+    right: 6%;
+    max-height: calc(100% - 140px);
+    margin: 0;
+    padding: 20px 22px;
+    overflow-y: auto;
+    border: 2px solid var(--ink);
+    border-radius: var(--card-radius);
+    background: white;
+    color: var(--ink);
+    box-shadow: var(--float-shadow);
+}
+
+.help h2 {
+    margin: 0 28px 12px 0;
+    font-size: 18px;
+}
+
+.help h3 {
+    margin: 16px 0 6px;
+    font-size: 14px;
+}
+
+.help-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.help-asks {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 12px;
+    align-items: center;
+    margin: 0;
+}
+
+.help-asks dt {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.help-asks dd {
+    margin: 0;
+}
+
+.help-asks .help-during {
+    grid-column: 2;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.phrase {
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--soft);
+    color: var(--ink);
+    font: inherit;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.help-hint,
+.help-notes {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.help-hint {
+    margin: 12px 0 0;
+}
+
+.help-notes {
+    margin: 0;
+    padding-left: 18px;
+}
+
+@media (hover: hover) {
+    .phrase:hover,
+    .help-toggle:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+}
+
 @media (max-width: 720px) {
+    .help-toggle.is-phone {
+        display: block;
+        flex: none;
+        align-self: center;
+        width: 28px;
+        height: 28px;
+    }
+
+    .help {
+        position: fixed;
+        top: auto;
+        bottom: calc(80px + env(safe-area-inset-bottom));
+        left: 12px;
+        right: 12px;
+        max-height: 70dvh;
+    }
+
     .buddy {
         --peek: 46px;
         display: grid;

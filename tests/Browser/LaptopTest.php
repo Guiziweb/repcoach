@@ -15,6 +15,7 @@ use function Playwright\Testing\expect;
 
 final class LaptopTest extends PlaywrightTestCase
 {
+    use HasSeenTheHelp;
     use ResetsTheDatabase;
 
     private const int WIDTH = 1280;
@@ -28,6 +29,7 @@ final class LaptopTest extends PlaywrightTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->skipTheHelp();
         $this->emptyDatabase();
 
         $limits = self::getContainer()->get('cache.rate_limiter');
@@ -76,7 +78,7 @@ final class LaptopTest extends PlaywrightTestCase
         $this->getPage()->setViewportSize(self::WIDTH, self::HEIGHT);
         $this->visit('/');
         $this->fill('form.ask input[name="message"]', 'finish');
-        $this->click('form.ask button');
+        $this->click('form.ask .send');
 
         expect($this->getPage()->locator('#bubble .trail'))->toBeVisible();
         expect($this->getPage()->locator('#bubble p'))->toContainText(mb_substr($answer, 0, 40));

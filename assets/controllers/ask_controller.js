@@ -66,6 +66,11 @@ export default class extends Controller {
         this.open();
     }
 
+    suggest({ params: { phrase } }) {
+        this.inputTarget.value = phrase;
+        this.inputTarget.form.requestSubmit();
+    }
+
     say(text) {
         this.unanswered = false;
         this.textTarget.textContent = text;

@@ -11,6 +11,9 @@
         {% block javascripts %}
             {{ importmap('app') }}
         {% endblock %}
+        {% if visits_counted %}
+            <script defer src="/_vercel/insights/script.js"></script>
+        {% endif %}
     </head>
     <body>
         {% block body %}{% endblock %}

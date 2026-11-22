@@ -1,6 +1,13 @@
 twig:
     file_name_pattern: '*.twig'
+    globals:
+        visits_counted: false
 
 when@test:
     twig:
         strict_variables: true
+
+when@prod:
+    twig:
+        globals:
+            visits_counted: true

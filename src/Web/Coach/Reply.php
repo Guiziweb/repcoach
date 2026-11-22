@@ -20,4 +20,9 @@ final readonly class Reply
         public ?PendingCall $confirm,
     ) {
     }
+
+    public function startingWith(string $notice): self
+    {
+        return new self($notice.' '.$this->text, $this->tools, $this->consumption, $this->visit, $this->refresh, $this->confirm);
+    }
 }

@@ -11,6 +11,7 @@ final readonly class Consumption
         public int $reply,
         public int $cached,
         public int $conversation,
+        public int $memory,
     ) {
     }
 }

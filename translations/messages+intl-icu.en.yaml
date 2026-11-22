@@ -7,7 +7,7 @@ buddy:
     confirm: 'Confirm: {action}'
     confirmed: I pressed the button.
     expired: That request is no longer valid. Tell me again what you want to do.
-    full: We have talked a lot, my memory is full. Press ↺ to start a fresh conversation.
+    fresh: My memory was full, so I am starting over.
     resting: "I have coached a lot today, I need to rest. Come back tomorrow!"
 menu:
     language: Language
@@ -28,10 +28,7 @@ programs:
     none: No program yet. Ask me to build one.
     empty: This program is empty. Tell me what to add.
 hud:
-    context: context
-    cached: '{tokens} cached'
-    reply: reply
-    total: total
+    memory: memory
     forget: Start over
 sessions:
     title: My sessions

@@ -34,6 +34,35 @@
     font-weight: 700;
 }
 
+.memory {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gauge {
+    width: 72px;
+    height: 6px;
+    overflow: hidden;
+    border-radius: 3px;
+    background: var(--soft);
+}
+
+.gauge-fill {
+    display: block;
+    height: 100%;
+    background: var(--ink);
+    transition: width .4s ease;
+}
+
+.memory.is-high .gauge-fill {
+    background: var(--accent);
+}
+
+.memory.is-high b {
+    color: var(--accent);
+}
+
 .hud form {
     margin: 0;
 }

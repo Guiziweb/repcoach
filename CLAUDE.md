@@ -88,6 +88,18 @@ Every change ships with the tests that cover it.
 
 Tests never use the network: HTTP is mocked.
 
+## Deployment
+
+A merge into `main` deploys https://repcoach-beta.vercel.app through the
+Vercel GitHub integration, and every pull request gets a protected preview.
+The image is the `Dockerfile`, served by FrankenPHP with the `Caddyfile`.
+
+Some settings live in the Vercel project, not in this repository:
+
+- environment variables `APP_SECRET`, `ANTHROPIC_API_KEY` and `REPCOACH_MODEL`
+- firewall: Bot Protection set to Challenge, and the rule "Slow down the
+  coach" (POST to `/coach*`, 10 requests per minute per IP)
+
 ## CI
 
 Every push and every pull request runs `make ci`. It must pass.

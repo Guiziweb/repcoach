@@ -13,6 +13,8 @@ The model never does the maths. Volume, durations and dates come from tool resul
 
 Made for the Symfony AI & MCP Hackathon.
 
+Try the web app at https://repcoach-beta.vercel.app: programs, past sessions and a coach to talk to. Everyone shares the same demo logbook, and it starts fresh whenever the server has been idle for a few minutes.
+
 https://github.com/user-attachments/assets/f4dbae54-c4af-424a-8e93-7d48484a9d52
 
 ## Running it

@@ -1,0 +1,22 @@
+<dialog class="help" aria-labelledby="help-title" data-help-target="dialog">
+    <button type="button" class="help-close" aria-label="{{ 'help.close'|trans }}" data-action="help#close">✕</button>
+    <h2 id="help-title">{{ 'help.title'|trans }}</h2>
+    <dl class="help-asks">
+        {% for topic in ['programs', 'session', 'history', 'review'] %}
+            <dt>{{ ('help.' ~ topic ~ '.topic')|trans }}</dt>
+            <dd>
+                <button type="button" class="phrase" data-action="ask#suggest help#close" data-ask-phrase-param="{{ ('help.' ~ topic ~ '.ask')|trans }}">{{ ('help.' ~ topic ~ '.ask')|trans }}</button>
+            </dd>
+            {% if 'session' == topic %}
+                <dd class="help-during">{{ 'help.during'|trans }}</dd>
+            {% endif %}
+        {% endfor %}
+    </dl>
+    <p class="help-hint">{{ 'help.hint'|trans }}</p>
+    <h3>{{ 'help.good_to_know'|trans }}</h3>
+    <ul class="help-notes">
+        <li>{{ 'help.deletion'|trans }}</li>
+        <li>{{ 'help.shared'|trans }}</li>
+        <li>{{ 'help.memory'|trans }}</li>
+    </ul>
+</dialog>

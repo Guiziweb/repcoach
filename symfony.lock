@@ -89,6 +89,24 @@
             "bin/phpunit"
         ]
     },
+    "playwright-php/playwright-symfony": {
+        "version": "v0.12.0"
+    },
+    "symfony/asset-mapper": {
+        "version": "8.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "6.4",
+            "ref": "c01c47af2ec66a74ec046eccb919cfe27d3464ec"
+        },
+        "files": [
+            "assets/app.js",
+            "assets/styles/app.css",
+            "config/packages/asset_mapper.yaml",
+            "importmap.php"
+        ]
+    },
     "symfony/console": {
         "version": "8.1",
         "recipe": {
@@ -173,6 +191,47 @@
             "config/routes.yaml"
         ]
     },
+    "symfony/stimulus-bundle": {
+        "version": "3.7",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "3.3",
+            "ref": "7ce779ee74ea8d8aae6afed73e8438af5a392b30"
+        },
+        "files": [
+            "assets/controllers.json",
+            "assets/controllers/csrf_protection_controller.js",
+            "assets/controllers/hello_controller.js",
+            "assets/stimulus_bootstrap.js"
+        ]
+    },
+    "symfony/translation": {
+        "version": "8.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "6.3",
+            "ref": "620a1b84865ceb2ba304c8f8bf2a185fbf32a843"
+        },
+        "files": [
+            "config/packages/translation.yaml",
+            "translations/.gitignore"
+        ]
+    },
+    "symfony/twig-bundle": {
+        "version": "8.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "6.4",
+            "ref": "06dacf16872358cb1f2494e089070ff2d045233a"
+        },
+        "files": [
+            "config/packages/twig.yaml",
+            "templates/base.html.twig"
+        ]
+    },
     "symfony/uid": {
         "version": "8.1",
         "recipe": {
@@ -181,6 +240,18 @@
             "version": "7.0",
             "ref": "0df5844274d871b37fc3816c57a768ffc60a43a5"
         }
+    },
+    "symfony/ux-turbo": {
+        "version": "3.7",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.20",
+            "ref": "eaff62fc37864d355804c778309a226ae539831f"
+        },
+        "files": [
+            "config/packages/ux_turbo.yaml"
+        ]
     },
     "symfony/validator": {
         "version": "8.1",
@@ -194,6 +265,19 @@
             "config/packages/validator.yaml"
         ]
     },
+    "symfony/web-profiler-bundle": {
+        "version": "8.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "8.1",
+            "ref": "6bdd46f712bbed33a27130b6e055391cb1ab73d9"
+        },
+        "files": [
+            "config/packages/web_profiler.yaml",
+            "config/routes/web_profiler.yaml"
+        ]
+    },
     "symfony/workflow": {
         "version": "8.1",
         "recipe": {
@@ -205,5 +289,8 @@
         "files": [
             "config/packages/workflow.yaml"
         ]
+    },
+    "twig/extra-bundle": {
+        "version": "v3.29.0"
     }
 }

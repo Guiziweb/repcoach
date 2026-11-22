@@ -49,7 +49,7 @@ final class WorkoutSessionRepository extends ServiceEntityRepository
     /**
      * @return list<SessionTally>
      */
-    public function closed(ClosedStatus $status, ?string $workout, ?DateTimeImmutable $from, ?DateTimeImmutable $until, int $limit): array
+    public function closed(ClosedStatus $status, ?string $workout, ?DateTimeImmutable $from, ?DateTimeImmutable $until, int $limit, int $offset = 0): array
     {
         /** @var list<array{0: WorkoutSession, sets: numeric-string|int, volume: numeric-string|float|int, reps: numeric-string|int, timedSeconds: numeric-string|int}> $rows */
         $rows = $this->filtered($status, $workout, $from, $until)
@@ -59,18 +59,51 @@ final class WorkoutSessionRepository extends ServiceEntityRepository
             ->orderBy('s.startedAt', 'DESC')
             ->addOrderBy('s.id', 'DESC')
             ->setMaxResults($limit)
+            ->setFirstResult($offset)
             ->getQuery()
             ->getResult();
 
         return array_map(static fn (array $row): SessionTally => new SessionTally($row[0], (int) $row['sets'], (float) $row['volume'], (int) $row['reps'], (int) $row['timedSeconds']), $rows);
     }
 
+    /**
+     * @return int<0, max>
+     */
     public function countClosed(ClosedStatus $status, ?string $workout, ?DateTimeImmutable $from, ?DateTimeImmutable $until): int
     {
-        return (int) $this->filtered($status, $workout, $from, $until)
+        return max(0, (int) $this->filtered($status, $workout, $from, $until)
             ->select('COUNT(s.id)')
             ->getQuery()
-            ->getSingleScalarResult();
+            ->getSingleScalarResult());
+    }
+
+    public function closedBefore(WorkoutSession $session, ClosedStatus $status): ?WorkoutSession
+    {
+        $found = $this->beside($session, $status, '<', 'DESC')->setMaxResults(1)->getQuery()->getOneOrNullResult();
+
+        return $found instanceof WorkoutSession ? $found : null;
+    }
+
+    public function closedAfter(WorkoutSession $session, ClosedStatus $status): ?WorkoutSession
+    {
+        $found = $this->beside($session, $status, '>', 'ASC')->setMaxResults(1)->getQuery()->getOneOrNullResult();
+
+        return $found instanceof WorkoutSession ? $found : null;
+    }
+
+    public function countClosedAfter(WorkoutSession $session, ClosedStatus $status): int
+    {
+        return (int) $this->beside($session, $status, '>', 'ASC')->select('COUNT(s.id)')->resetDQLPart('orderBy')->getQuery()->getSingleScalarResult();
+    }
+
+    private function beside(WorkoutSession $session, ClosedStatus $status, string $direction, string $order): QueryBuilder
+    {
+        return $this->filtered($status, null, null, null)
+            ->andWhere(\sprintf('s.startedAt %1$s :at OR (s.startedAt = :at AND s.id %1$s :id)', $direction))
+            ->setParameter('at', $session->startedAt)
+            ->setParameter('id', $session->getId())
+            ->orderBy('s.startedAt', $order)
+            ->addOrderBy('s.id', $order);
     }
 
     private function filtered(ClosedStatus $status, ?string $workout, ?DateTimeImmutable $from, ?DateTimeImmutable $until): QueryBuilder

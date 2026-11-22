@@ -1,0 +1,19 @@
+{% extends 'layout.html.twig' %}
+
+{% block screen %}
+    {{ include('screen/head.html.twig', {kicker: 'programs.title'|trans ~ ' · ' ~ program.position ~ ' / ' ~ program.count}) }}
+
+    <nav class="switcher">
+        {{ include('screen/switch.html.twig', {direction: 'previous', to: path('program', {name: program.previous.name}), label: program.previous.name}) }}
+        <h1>{{ program.workout.name }}</h1>
+        {{ include('screen/switch.html.twig', {direction: 'next', to: path('program', {name: program.next.name}), label: program.next.name}) }}
+    </nav>
+
+    <ol class="plan">
+        {% for line in program.workout.exercises %}
+            {{ include('screen/line.html.twig', {position: line.position, exercise: line.exercise.name, planned: line}) }}
+        {% else %}
+            <li class="empty">{{ 'programs.empty'|trans }}</li>
+        {% endfor %}
+    </ol>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <main class="stage" data-controller="keys" data-action="keydown.left@window->keys#previous keydown.right@window->keys#next">
+        <turbo-frame class="screen" id="screen" data-turbo-action="advance">
+            {% block screen %}{% endblock %}
+        </turbo-frame>
+    </main>
+{% endblock %}

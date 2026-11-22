@@ -1,0 +1,77 @@
+@import url('stage.css');
+@import url('menu.css');
+@import url('plan.css');
+@import url('sessions.css');
+
+:root {
+    --ink: #141a26;
+    --accent: #ff5a36;
+    --muted: #8b877e;
+    --line: #dcd9d1;
+    --soft: #f0eee9;
+    --faded: #b9b5ad;
+    --edge: #e2dfd8;
+    --paper: #faf9f6;
+    --done: #2e7d32;
+    --done-soft: #e9f6ea;
+    --accent-soft: #fff1ec;
+    --accent-glow: rgba(255, 90, 54, .22);
+    --eye: #f3f2ee;
+    --sweat: #6ec6f2;
+    --floor: 72%;
+    --screen-backdrop: linear-gradient(180deg, #f6f5f1 0%, #ecebe6 var(--floor), #dedbd3 var(--floor), #d6d3cb 100%);
+    --card-shadow: 0 4px 14px rgba(0, 0, 0, .05);
+    --raised-shadow: 0 4px 14px rgba(0, 0, 0, .08);
+    --bubble-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+    --float-shadow: 0 10px 30px rgba(0, 0, 0, .15);
+    --card-radius: 16px;
+    --content-width: 760px;
+    --wide-width: 820px;
+    --title: "Avenir Next", "Helvetica Neue", sans-serif;
+    --mono: Menlo, monospace;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: var(--title);
+    color: var(--ink);
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+h1 {
+    margin: 0;
+    font-weight: 800;
+}
+
+ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.empty {
+    color: var(--muted);
+    font-size: 17px;
+}
+
+.turbo-progress-bar {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
+    }
+}

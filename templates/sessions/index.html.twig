@@ -1,0 +1,32 @@
+{% extends 'layout.html.twig' %}
+
+{% block screen %}
+    {% set page = 'sessions.page'|trans({page: list.currentPage, pages: list.nbPages}) %}
+
+    {{ include('screen/head.html.twig', {kicker: 'sessions.title'|trans ~ ' · ' ~ page}) }}
+
+    {% if list.nbResults == 0 %}
+        <p class="empty">{{ 'sessions.none'|trans }}</p>
+    {% else %}
+        <ol class="sessions">
+            {% for row in list.currentPageResults %}
+                {% set session = row.tally.session %}
+                <li>
+                    <a class="session-row" href="{{ path('session', {id: session.id}) }}">
+                        <span class="session-date">{{ session.startedAt|format_datetime(pattern: 'EEE d MMM') }}</span>
+                        <span class="session-name">{{ session.workoutName }}</span>
+                        <span class="session-figure is-duration">{{ row.duration.minutes }} {{ 'unit.minutes'|trans }}</span>
+                        <span class="session-figure is-sets">{{ row.tally.sets }} {{ 'sessions.sets'|trans({count: row.tally.sets}) }}</span>
+                        <span class="session-figure is-volume">{{ row.tally.volume|format_number }} {{ 'unit.kg'|trans }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ol>
+
+        <nav class="pager">
+            {{ include('screen/switch.html.twig', {direction: 'previous', to: list.hasPreviousPage ? path('sessions', {page: list.previousPage}), label: 'sessions.page'|trans({page: list.currentPage - 1, pages: list.nbPages})}) }}
+            <span>{{ page }}</span>
+            {{ include('screen/switch.html.twig', {direction: 'next', to: list.hasNextPage ? path('sessions', {page: list.nextPage}), label: 'sessions.page'|trans({page: list.currentPage + 1, pages: list.nbPages})}) }}
+        </nav>
+    {% endif %}
+{% endblock %}

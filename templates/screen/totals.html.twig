@@ -1,0 +1,8 @@
+<div class="totals">
+    <div><b>{{ session.volume|format_number }}</b> {{ 'unit.kg'|trans }}</div>
+    <div><b>{{ session.reps|format_number }}</b> {{ 'sessions.reps'|trans({count: session.reps}) }}</div>
+    {% if session.timedSeconds > 0 %}
+        <div><b>{{ session.timedSeconds|format_number }}</b> {{ 'unit.seconds'|trans }}</div>
+    {% endif %}
+    <div><b>{{ session.sets|length }}</b> {{ 'sessions.sets'|trans({count: session.sets|length}) }}</div>
+</div>

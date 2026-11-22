@@ -1,0 +1,6 @@
+{% set arrow = direction == 'previous' ? '‹' : '›' %}
+{% if to %}
+    <a class="switch" href="{{ to }}" data-keys-target="{{ direction }}" aria-label="{{ label }}">{{ arrow }}</a>
+{% else %}
+    <span class="switch is-off" aria-hidden="true">{{ arrow }}</span>
+{% endif %}

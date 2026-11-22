@@ -1,0 +1,121 @@
+.stage {
+    display: grid;
+    grid-template-columns: 1fr;
+    height: 100dvh;
+}
+
+.screen {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 6vh 5vw;
+    overflow: hidden;
+    background: var(--screen-backdrop);
+}
+
+.screen-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4vh;
+}
+
+.back {
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.logo {
+    font-size: 56px;
+    letter-spacing: -3px;
+    color: var(--accent);
+}
+
+.kicker {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.switcher,
+.screen-title {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    margin-bottom: 4vh;
+}
+
+.switcher h1,
+.screen-title h1 {
+    min-width: 220px;
+    font-size: 64px;
+    letter-spacing: -2.5px;
+    text-align: center;
+}
+
+.switch {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: white;
+    color: var(--ink);
+    font-size: 34px;
+    line-height: 1;
+    box-shadow: var(--raised-shadow);
+    transition: color .2s, transform .2s, box-shadow .2s;
+}
+
+.switch.is-off {
+    opacity: .3;
+    box-shadow: none;
+}
+
+@media (hover: hover) {
+    .switch:hover {
+        color: var(--accent);
+        transform: scale(1.08);
+        box-shadow: 0 8px 22px var(--accent-glow);
+    }
+}
+
+@media (max-width: 720px) {
+    .screen {
+        padding: 20px 18px 12px;
+    }
+
+    .screen-head {
+        margin-bottom: 18px;
+    }
+
+    .logo {
+        font-size: clamp(36px, 12vw, 56px);
+    }
+
+    .switcher,
+    .screen-title {
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .switcher h1,
+    .screen-title h1 {
+        flex: 1;
+        min-width: 0;
+        font-size: 34px;
+        letter-spacing: -1px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .switch {
+        width: 44px;
+        height: 44px;
+        font-size: 28px;
+    }
+}

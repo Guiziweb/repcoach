@@ -1,0 +1,19 @@
+{% import 'screen/effort.html.twig' as effort %}
+<li class="plan-line{{ complete|default(false) ? ' is-done' }}">
+    <span class="plan-position">{{ position }}</span>
+    <span class="plan-exercise">{{ exercise }}</span>
+    {% if planned is defined %}
+        <span class="plan-effort">{{ effort.plan(planned) }}</span>
+    {% else %}
+        <span class="chips">
+            {% for set in sets %}
+                <span class="chip">{{ effort.set(set) }}</span>
+            {% endfor %}
+            {% if left|default(0) > 0 %}
+                {% for i in 1..left %}
+                    <span class="chip is-planned">{{ effort.set(target) }}</span>
+                {% endfor %}
+            {% endif %}
+        </span>
+    {% endif %}
+</li>

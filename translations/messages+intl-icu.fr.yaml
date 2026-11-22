@@ -1,0 +1,28 @@
+menu:
+    programs: Mes programmes
+    sessions: Mes séances
+    live: 'Séance en cours · {workout}'
+    start: Démarrer une séance
+live:
+    title: Séance en cours
+    none: Aucune séance en cours. Dis-moi quel programme lancer.
+    running: En cours
+    empty: "Aucune série pour l'instant."
+    paused: En pause
+nav:
+    menu: Menu
+programs:
+    title: Mes programmes
+    none: Pas encore de programme. Demande-moi d'en construire un.
+    empty: Ce programme est vide. Dis-moi quoi ajouter.
+sessions:
+    title: Mes séances
+    none: Pas encore de séance.
+    empty: "Cette séance n'a aucune série."
+    reps: '{count, plural, one {rep} other {reps}}'
+    sets: '{count, plural, one {série} other {séries}}'
+    page: 'Page {page} sur {pages}'
+unit:
+    kg: kg
+    seconds: s
+    minutes: min

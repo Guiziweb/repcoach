@@ -1,0 +1,130 @@
+.sessions {
+    max-width: var(--wide-width);
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.session-row {
+    display: grid;
+    grid-template-columns: 120px 1fr 90px 90px 120px;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: clamp(4px, .8vh, 8px);
+    padding: clamp(8px, 1.5vh, 14px) 20px;
+    background: white;
+    border: 2px solid transparent;
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    font-size: 16px;
+    transition: border-color .15s, transform .15s;
+}
+
+@media (hover: hover) {
+    .session-row:hover {
+        border-color: var(--accent);
+        transform: translateX(4px);
+    }
+}
+
+.session-date {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.session-name {
+    font-weight: 700;
+}
+
+.session-figure {
+    text-align: right;
+    color: var(--muted);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+}
+
+.session-figure.is-volume {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.pager {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: var(--wide-width);
+    margin-top: auto;
+    padding-top: 14px;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.pager .switch {
+    width: 40px;
+    height: 40px;
+    font-size: 26px;
+}
+
+.session-when {
+    margin: 0 0 0 auto;
+    text-align: right;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.session-when b {
+    display: block;
+    color: var(--ink);
+    font-size: 18px;
+}
+
+.session-when b::first-letter {
+    text-transform: uppercase;
+}
+
+.chrono {
+    font-variant-numeric: tabular-nums;
+}
+
+.switcher.is-session,
+.screen-title {
+    max-width: var(--content-width);
+}
+
+@media (max-width: 720px) {
+    .session-row {
+        grid-template-columns: 1fr auto auto;
+        grid-template-areas:
+            "name name volume"
+            "date duration sets";
+        gap: 2px 12px;
+        padding: 12px 16px;
+    }
+
+    .session-date {
+        grid-area: date;
+    }
+
+    .session-name {
+        grid-area: name;
+    }
+
+    .session-figure.is-duration {
+        grid-area: duration;
+    }
+
+    .session-figure.is-sets {
+        grid-area: sets;
+    }
+
+    .session-figure.is-volume {
+        grid-area: volume;
+    }
+
+    .session-when {
+        flex-basis: 100%;
+        margin: 0;
+        text-align: left;
+    }
+}

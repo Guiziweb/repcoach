@@ -1,0 +1,5 @@
+{% macro amount(effort) %}{{ effort.reps ?? (effort.seconds ~ ' ' ~ 'unit.seconds'|trans) }}{% endmacro %}
+
+{% macro set(effort) %}{{ _self.amount(effort) }}{% if effort.weight %} × {{ effort.weight|format_number }}{% endif %}{% endmacro %}
+
+{% macro plan(line) %}{{ line.sets }} × {{ _self.amount(line) }}{% if line.weight %} · {{ line.weight|format_number }} {{ 'unit.kg'|trans }}{% endif %}{% endmacro %}

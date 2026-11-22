@@ -1,0 +1,26 @@
+{
+	admin off
+}
+
+:{$PORT:80} {
+	root * /app/public
+	encode zstd gzip
+
+	header {
+		Content-Security-Policy "frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+		X-Frame-Options DENY
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-X-Powered-By
+	}
+
+	@phpFile path *.php*
+	error @phpFile "Not found" 404
+
+	php_server {
+		try_files {path} index.php
+	}
+
+	file_server
+}

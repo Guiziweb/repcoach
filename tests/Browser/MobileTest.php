@@ -131,7 +131,7 @@ final class MobileTest extends PlaywrightTestCase
         $this->coach()->answers(self::LONG_ANSWER);
         $this->fill('form.ask input[name="message"]', 'hello');
         $this->getPage()->keyboard()->press('Enter');
-        expect($this->getPage()->locator('#buddy'))->toHaveClass('buddy is-open');
+        $this->expectAnswered(self::LONG_ANSWER);
 
         $this->getPage()->keyboard()->type('next');
 
@@ -203,6 +203,12 @@ final class MobileTest extends PlaywrightTestCase
         $this->fill('form.ask input[name="message"]', 'hello');
         $this->click('form.ask .send');
 
+        $this->expectAnswered($answer);
+    }
+
+    private function expectAnswered(string $answer): void
+    {
+        expect($this->getPage()->locator('#bubble p'))->toContainText(mb_substr($answer, 0, 40));
         expect($this->getPage()->locator('#buddy'))->toHaveClass('buddy is-open');
     }
 

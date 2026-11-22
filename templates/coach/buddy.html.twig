@@ -1,0 +1,19 @@
+<aside class="buddy" id="buddy" data-turbo-permanent
+       data-controller="ask" data-ask-figure-outlet=".figure"
+       data-ask-failed-value="{{ 'buddy.failed'|trans }}" data-ask-slow-value="{{ 'buddy.slow'|trans }}"
+       data-ask-busy-class="is-busy" data-ask-open-class="is-open"
+       data-action="click@document->ask#dismiss touchmove@document->ask#dismiss">
+    {{ include('coach/hud.html.twig', {consumption: null}) }}
+    <div class="bubble-slot" aria-live="polite">
+        {{ include('coach/bubble.html.twig', {say: 'buddy.greeting'|trans}) }}
+    </div>
+    <template data-ask-target="typing"><span class="typing"><i></i><i></i><i></i></span></template>
+    <svg class="figure" viewBox="-150 -440 300 460" data-controller="figure" data-figure-pose-value="wave"></svg>
+    <form class="ask" id="ask" action="{{ path('coach_reply') }}" method="post"
+          data-action="submit->ask#send turbo:submit-start->ask#start turbo:before-fetch-response->ask#guard turbo:submit-end->ask#end">
+        <input type="hidden" name="_token" value="{{ csrf_token('coach') }}">
+        <input type="hidden" name="screen" data-ask-target="screen">
+        <input name="message" placeholder="{{ 'buddy.placeholder'|trans }}" aria-label="{{ 'buddy.placeholder'|trans }}" autocomplete="off" required pattern=".*\S.*" data-ask-target="input" data-action="focus->ask#close input->ask#close">
+        <button aria-label="{{ 'buddy.send'|trans }}">↑</button>
+    </form>
+</aside>

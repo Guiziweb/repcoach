@@ -1,0 +1,327 @@
+.buddy {
+    --figure: min(330px, 32vh);
+    --ground: calc(100% - var(--floor));
+    --bubble-gap: 15px;
+    --hud-room: 64px;
+    position: relative;
+    border-left: 1px solid var(--edge);
+    background: var(--buddy-backdrop);
+}
+
+.hud {
+    position: absolute;
+    top: 18px;
+    left: 8%;
+    right: 8%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 14px;
+    min-height: 16px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.hud span {
+    white-space: nowrap;
+}
+
+.hud b {
+    color: var(--ink);
+    font-weight: 700;
+}
+
+.hud form {
+    margin: 0;
+}
+
+.forget {
+    padding: 0 4px;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .forget:hover {
+        color: var(--accent);
+    }
+}
+
+.bubble-slot {
+    display: contents;
+}
+
+.bubble {
+    position: absolute;
+    bottom: calc(var(--ground) + var(--figure) + var(--bubble-gap));
+    left: 8%;
+    right: 8%;
+    min-height: 58px;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(var(--floor) - var(--figure) - var(--bubble-gap) - var(--hud-room));
+    padding: 16px 20px;
+    font-size: 17px;
+    line-height: 1.45;
+    background: white;
+    border: 2px solid var(--ink);
+    border-radius: 22px;
+    box-shadow: var(--bubble-shadow);
+}
+
+@property --fade {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+}
+
+@keyframes fade-until-the-end {
+    from {
+        --fade: 1.5em;
+    }
+
+    to {
+        --fade: 0px;
+    }
+}
+
+.bubble p {
+    min-height: 0;
+    margin: 0;
+    overflow-y: auto;
+    mask-image: linear-gradient(to bottom, black calc(100% - var(--fade)), transparent);
+    animation: fade-until-the-end linear both;
+    animation-timeline: scroll(self);
+}
+
+.bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -16px;
+    left: 50%;
+    border: 14px solid transparent;
+    border-top-color: var(--ink);
+    border-bottom: 0;
+    transform: translateX(-50%);
+}
+
+.trail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 12px 0 0;
+    padding: 10px 0 0;
+    list-style: none;
+    border-top: 1px solid var(--soft);
+}
+
+.tool {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--soft);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.tool.is-write {
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.tool-count {
+    font-weight: 700;
+    opacity: .7;
+}
+
+.typing {
+    display: inline-flex;
+    gap: 6px;
+    padding: 6px 0;
+}
+
+.typing i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ink);
+    opacity: 0;
+    animation: typing 1.2s infinite;
+}
+
+.typing i:nth-child(2) {
+    animation-delay: .2s;
+}
+
+.typing i:nth-child(3) {
+    animation-delay: .4s;
+}
+
+@keyframes typing {
+    0%, 100% {
+        opacity: 0;
+        transform: translateY(2px);
+    }
+
+    40%, 60% {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.figure {
+    position: absolute;
+    left: 50%;
+    bottom: var(--ground);
+    width: calc(var(--figure) * .79);
+    height: var(--figure);
+    color: var(--ink);
+    transform: translateX(-50%);
+    overflow: visible;
+}
+
+.ask {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: 6%;
+    display: flex;
+    gap: 8px;
+    padding: 6px 6px 6px 16px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+}
+
+.ask:focus-within {
+    border-color: var(--ink);
+}
+
+.ask input {
+    flex: 1;
+    border: 0;
+    outline: none;
+    font: inherit;
+    font-size: 15px;
+    background: transparent;
+}
+
+.ask button {
+    padding: 7px 14px;
+    border: 0;
+    border-radius: 16px;
+    background: var(--accent);
+    color: white;
+    font: inherit;
+    font-weight: 600;
+}
+
+.buddy.is-busy .ask {
+    opacity: .6;
+}
+
+.buddy.is-busy .bubble .trail {
+    display: none;
+}
+
+@media (max-width: 720px) {
+    .buddy {
+        --peek: 46px;
+        display: grid;
+        grid-template-columns: 36px 1fr;
+        grid-template-areas:
+            "bubble bubble"
+            "figure ask";
+        align-items: end;
+        gap: 14px 10px;
+        padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+        border-top: 1px solid var(--edge);
+        border-left: 0;
+        background: var(--paper);
+    }
+
+    .hud {
+        display: none;
+    }
+
+    .bubble-slot {
+        display: block;
+        grid-area: bubble;
+        position: relative;
+        height: var(--peek);
+    }
+
+    .bubble {
+        z-index: 1;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        min-height: 0;
+        max-height: var(--peek);
+        padding: 11px 16px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: max-height .25s ease, box-shadow .25s;
+    }
+
+    .bubble p {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .buddy:not(.is-open) .bubble p {
+        animation: none;
+    }
+
+    .bubble .trail {
+        display: none;
+    }
+
+    .bubble::after {
+        left: 18px;
+        transform: none;
+    }
+
+    .buddy.is-open .bubble {
+        max-height: 60dvh;
+        box-shadow: var(--float-shadow);
+    }
+
+    .buddy.is-open .bubble p {
+        display: block;
+        overflow-y: auto;
+    }
+
+    .buddy.is-open .bubble .trail {
+        display: flex;
+    }
+
+    .figure {
+        position: static;
+        grid-area: figure;
+        width: 36px;
+        height: 55px;
+        transform: none;
+    }
+
+    .ask {
+        position: static;
+        grid-area: ask;
+    }
+
+    .ask input {
+        font-size: 16px;
+    }
+}

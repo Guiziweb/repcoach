@@ -1,0 +1,6 @@
+<turbo-stream action="replace" target="hud">
+    <template>{{ include('coach/hud.html.twig', {consumption: null}) }}</template>
+</turbo-stream>
+<turbo-stream action="replace" target="bubble">
+    <template>{{ include('coach/bubble.html.twig', {say: 'buddy.greeting'|trans}) }}</template>
+</turbo-stream>

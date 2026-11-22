@@ -1,4 +1,5 @@
 @import url('stage.css');
+@import url('buddy.css');
 @import url('menu.css');
 @import url('plan.css');
 @import url('sessions.css');
@@ -20,6 +21,7 @@
     --sweat: #6ec6f2;
     --floor: 72%;
     --screen-backdrop: linear-gradient(180deg, #f6f5f1 0%, #ecebe6 var(--floor), #dedbd3 var(--floor), #d6d3cb 100%);
+    --buddy-backdrop: linear-gradient(180deg, var(--paper) 0%, #f1efea var(--floor), #e4e1da var(--floor), #dedbd3 100%);
     --card-shadow: 0 4px 14px rgba(0, 0, 0, .05);
     --raised-shadow: 0 4px 14px rgba(0, 0, 0, .08);
     --bubble-shadow: 0 6px 18px rgba(0, 0, 0, .06);
@@ -73,5 +75,10 @@ ol {
     *::before,
     *::after {
         transition: none !important;
+    }
+
+    .typing i {
+        animation: none;
+        opacity: 1;
     }
 }

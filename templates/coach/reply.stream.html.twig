@@ -1,0 +1,11 @@
+<turbo-stream action="replace" target="hud">
+    <template>{{ include('coach/hud.html.twig', {consumption: reply.consumption}) }}</template>
+</turbo-stream>
+<turbo-stream action="replace" target="bubble">
+    <template>{{ include('coach/bubble.html.twig', {say: reply.text, tools: reply.tools}) }}</template>
+</turbo-stream>
+{% if reply.visit %}
+    <turbo-stream action="visit" url="{{ reply.visit }}" frame="screen"></turbo-stream>
+{% elseif reply.refresh %}
+    <turbo-stream action="refresh"></turbo-stream>
+{% endif %}

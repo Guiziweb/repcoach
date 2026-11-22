@@ -1,3 +1,9 @@
+buddy:
+    greeting: Hi! I keep your workouts. What do we do today?
+    failed: Sorry, I could not finish that one. Try again, maybe in smaller steps.
+    slow: Easy, give me a minute to catch my breath.
+    placeholder: Talk to me…
+    send: Send
 menu:
     programs: My programs
     sessions: My sessions
@@ -15,6 +21,12 @@ programs:
     title: My programs
     none: No program yet. Ask me to build one.
     empty: This program is empty. Tell me what to add.
+hud:
+    context: context
+    cached: '{tokens} cached'
+    reply: reply
+    total: total
+    forget: Start over
 sessions:
     title: My sessions
     none: No session yet.

@@ -1,0 +1,10 @@
+framework:
+    rate_limiter:
+        coach_client:
+            policy: token_bucket
+            limit: 2
+            rate: { interval: '10 seconds', amount: 1 }
+        coach_total:
+            policy: sliding_window
+            limit: 30
+            interval: '1 minute'

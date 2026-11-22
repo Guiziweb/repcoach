@@ -1,3 +1,9 @@
+buddy:
+    greeting: Salut ! Je garde tes séances. On fait quoi aujourd'hui ?
+    failed: Désolé, je n'ai pas réussi à aller au bout. Réessaie, peut-être en plus petites étapes.
+    slow: Doucement, laisse-moi une minute pour souffler.
+    placeholder: Parle-moi…
+    send: Envoyer
 menu:
     programs: Mes programmes
     sessions: Mes séances
@@ -15,6 +21,12 @@ programs:
     title: Mes programmes
     none: Pas encore de programme. Demande-moi d'en construire un.
     empty: Ce programme est vide. Dis-moi quoi ajouter.
+hud:
+    context: contexte
+    cached: 'dont {tokens} en cache'
+    reply: réponse
+    total: total
+    forget: Recommencer
 sessions:
     title: Mes séances
     none: Pas encore de séance.

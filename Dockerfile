@@ -2,7 +2,7 @@ FROM dunglas/frankenphp:1-php8.4-bookworm AS base
 
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
     && echo "expose_php = Off" > "$PHP_INI_DIR/conf.d/zz-hide-the-version.ini" \
-    && install-php-extensions intl zip pdo_sqlite opcache
+    && install-php-extensions intl zip pdo_sqlite opcache redis
 
 WORKDIR /app
 
@@ -29,7 +29,7 @@ COPY . .
 RUN composer dump-autoload --no-dev --classmap-authoritative \
     && php bin/console importmap:install \
     && php bin/console asset-map:compile \
-    && php bin/console cache:clear
+    && REDIS_URL=redis://localhost php bin/console cache:clear
 
 FROM base AS runtime
 

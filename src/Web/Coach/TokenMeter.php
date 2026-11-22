@@ -12,6 +12,8 @@ final readonly class TokenMeter
 {
     private const string TOTAL = 'coach_tokens';
 
+    private const string CONTEXT = 'coach_context';
+
     public function __construct(
         private RequestStack $requests,
     ) {
@@ -26,13 +28,23 @@ final readonly class TokenMeter
         $calls = $usage instanceof TokenUsageAggregation ? $usage->getTokenUsages() : [$usage];
         $last = end($calls);
         $reply = self::read($usage) + ($usage->getCompletionTokens() ?? 0);
+        $context = false === $last ? 0 : self::read($last);
+        $this->requests->getSession()->set(self::CONTEXT, $context);
 
-        return new Consumption(false === $last ? 0 : self::read($last), $reply, $usage->getCacheReadTokens() ?? 0, $this->add($reply));
+        return new Consumption($context, $reply, $usage->getCacheReadTokens() ?? 0, $this->add($reply));
+    }
+
+    public function context(): int
+    {
+        $context = $this->requests->getSession()->get(self::CONTEXT, 0);
+
+        return \is_int($context) ? $context : 0;
     }
 
     public function reset(): void
     {
         $this->requests->getSession()->remove(self::TOTAL);
+        $this->requests->getSession()->remove(self::CONTEXT);
     }
 
     private function add(int $tokens): int

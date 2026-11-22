@@ -101,6 +101,22 @@
     animation-timeline: scroll(self);
 }
 
+.confirm {
+    margin: 12px 0 0;
+}
+
+.confirm button {
+    padding: 8px 14px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--accent);
+    color: white;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
 .bubble::after {
     content: '';
     position: absolute;
@@ -230,6 +246,7 @@
     opacity: .6;
 }
 
+.buddy.is-busy .bubble .confirm,
 .buddy.is-busy .bubble .trail {
     display: none;
 }
@@ -285,7 +302,8 @@
         animation: none;
     }
 
-    .bubble .trail {
+    .bubble .trail,
+    .bubble .confirm {
         display: none;
     }
 
@@ -306,6 +324,10 @@
 
     .buddy.is-open .bubble .trail {
         display: flex;
+    }
+
+    .buddy.is-open .bubble .confirm {
+        display: block;
     }
 
     .figure {

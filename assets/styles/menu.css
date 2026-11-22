@@ -60,3 +60,22 @@
         display: none;
     }
 }
+
+.languages {
+    display: flex;
+    gap: 14px;
+    margin-top: auto;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.language {
+    color: var(--muted);
+}
+
+.language[aria-current] {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}

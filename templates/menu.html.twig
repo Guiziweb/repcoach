@@ -12,4 +12,10 @@
         <a class="menu-item" href="{{ path('programs') }}">{{ 'menu.programs'|trans }}</a>
         <a class="menu-item" href="{{ path('sessions') }}">{{ 'menu.sessions'|trans }}</a>
     </nav>
+
+    <nav class="languages" aria-label="{{ 'menu.language'|trans }}">
+        {% for language in ['en', 'fr'] %}
+            <a class="language" href="{{ path('language', {language: language}) }}" lang="{{ language }}" data-turbo="false"{% if app.request.locale == language %} aria-current="true"{% endif %}>{{ language|upper }}</a>
+        {% endfor %}
+    </nav>
 {% endblock %}

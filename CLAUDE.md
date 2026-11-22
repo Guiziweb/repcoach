@@ -26,6 +26,7 @@ Always use the Makefile, never the underlying tools directly.
 
 ```
 make install   composer install
+make browsers  install Chromium for the browser tests (needs Node.js 20 or later)
 make migrate   run the database migrations
 make import    load the exercise catalogue from RepDB
 make fixtures  load the sample programs and their history (after make import)
@@ -34,13 +35,14 @@ make cs-fix    fix code style
 make lint      Symfony checks: YAML syntax, container wiring, Doctrine mapping
 make stan      PHPStan, level max
 make test      PHPUnit
-make ci        cs + lint + stan + test, what CI runs
+make ci        cs + lint + stan + test, what CI runs (browser tests need make browsers)
+make serve     start the web app on http://127.0.0.1:8010
 ```
 
 ## Commits
 
 Conventional Commits, written in English. One line per commit, no body.
-The scope is the domain: shared, exercise, workout, session, server,
+The scope is the domain: shared, exercise, workout, session, server, web,
 fixtures, docs or ci.
 
 Commits are created by the GitHub App `guiziwebbot` through the API, so they
@@ -52,7 +54,7 @@ One branch per task, named `<issue number>-<short slug>`
 (`35-create-the-symfony-application`), and one pull request per task. A task
 that needs the previous one is stacked on it: its pull request has the
 previous branch as base, and it is retargeted to `main` once that one is
-merged. Merge with a merge commit, in order.
+merged. Squash and merge, in order, with the one-line commit message.
 
 Pull requests are opened by the same bot, with the owner as reviewer. The
 title is plain text, not a Conventional Commit. The body starts with

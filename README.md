@@ -7,7 +7,7 @@
 ![MCP](https://img.shields.io/badge/MCP-server-blueviolet)
 ![License MIT](https://img.shields.io/badge/license-MIT-blue)
 
-An MCP server to log gym workouts from your AI assistant. You tell it what you did, it calls the tools, and the server keeps the numbers. Symfony, SQLite, no front end.
+An MCP server to log gym workouts from your AI assistant. You tell it what you did, it calls the tools, and the server keeps the numbers. Symfony, SQLite, and a small web app where the same coach drives the screens.
 
 The model never does the maths. Volume, durations and dates come from tool results, so when the assistant says "you lifted 12 780 kg on Friday" it read that from the server.
 
@@ -17,7 +17,7 @@ https://github.com/user-attachments/assets/f4dbae54-c4af-424a-8e93-7d48484a9d52
 
 ## Running it
 
-You need PHP 8.4 or later with SQLite, Composer and make.
+You need PHP 8.4 or later with the SQLite and intl extensions, Composer and make. `make install` also downloads the JavaScript the web app uses.
 
 ```
 make install
@@ -150,7 +150,7 @@ The code is split by domain (`Exercise`, `Workout`, `Session`, `Shared`), with o
 
 ## Tests
 
-`make ci` runs php-cs-fixer, the Symfony lints, PHPStan (max level) and PHPUnit. One test talks to the server over HTTP, a transport only switched on in the test environment, and calls every tool once, so a tool added without a test fails the build. The tests never use the network.
+`make ci` runs php-cs-fixer, the Symfony lints, PHPStan (max level) and PHPUnit. The browser tests drive Chromium through Playwright: install it once with `make browsers`, which needs Node.js 20 or later. One test talks to the server over HTTP, a transport only switched on in the test environment, and calls every tool once, so a tool added without a test fails the build. The tests never use the network.
 
 ## Credits
 

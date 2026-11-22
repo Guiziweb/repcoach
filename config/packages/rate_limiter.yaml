@@ -8,3 +8,7 @@ framework:
             policy: sliding_window
             limit: 30
             interval: '1 minute'
+        coach_tokens:
+            policy: fixed_window
+            limit: 3000000
+            interval: '1 day'

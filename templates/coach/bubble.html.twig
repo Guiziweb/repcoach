@@ -1,5 +1,10 @@
 <div class="bubble" id="bubble" tabindex="0" data-action="click->ask#open keydown.enter->ask#open">
     <p data-ask-target="text">{{ say }}</p>
+    {% if confirm|default(null) %}
+        <div class="confirm">
+            <button form="ask" formaction="{{ path('coach_confirm') }}" formnovalidate name="id" value="{{ confirm.id }}">{{ 'buddy.confirm'|trans({action: confirm.action}) }}</button>
+        </div>
+    {% endif %}
     {% if tools|default([]) is not empty %}
         <ul class="trail">
             {% for tool in tools %}

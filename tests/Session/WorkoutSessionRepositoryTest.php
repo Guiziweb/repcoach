@@ -6,6 +6,7 @@ namespace App\Tests\Session;
 
 use App\Exercise\Exercise;
 use App\Session\ClosedStatus;
+use App\Session\SessionTally;
 use App\Session\SessionTransition;
 use App\Session\WorkoutSession;
 use App\Session\WorkoutSessionRepository;
@@ -90,6 +91,17 @@ final class WorkoutSessionRepositoryTest extends KernelTestCase
         self::assertCount(1, $this->sessions->closed(ClosedStatus::Finished, ' épaules ', null, null, 10));
         self::assertSame(1, $this->sessions->countClosed(ClosedStatus::Finished, 'ÉPAULES', null, null));
         self::assertSame(0, $this->sessions->countClosed(ClosedStatus::Finished, 'jambes', null, null));
+    }
+
+    public function testARenamedWorkoutKeepsItsSessions(): void
+    {
+        $session = $this->finished('Pecs', '10:00');
+        $session->workout?->rename('Chest');
+        $this->entityManager->flush();
+
+        self::assertSame([$session], array_map(static fn (SessionTally $tally): WorkoutSession => $tally->session, $this->sessions->closed(ClosedStatus::Finished, 'chest', null, null, 10)));
+        self::assertSame(1, $this->sessions->countClosed(ClosedStatus::Finished, 'Chest', null, null));
+        self::assertSame(1, $this->sessions->countClosed(ClosedStatus::Finished, 'Pecs', null, null));
     }
 
     public function testItSkipsTheSessionsOfThePreviousPages(): void

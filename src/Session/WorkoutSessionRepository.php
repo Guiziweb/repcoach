@@ -113,7 +113,10 @@ final class WorkoutSessionRepository extends ServiceEntityRepository
             ->setParameter('status', $status->status());
 
         if (null !== $workout && '' !== trim($workout)) {
-            $builder->andWhere('s.workoutName IN (:workouts)')->setParameter('workouts', $this->namesMatching($workout) ?: ['']);
+            $builder
+                ->andWhere('(s.workout IN (:workouts) OR s.workoutName IN (:names))')
+                ->setParameter('workouts', $this->workoutsNamed($workout) ?: [0])
+                ->setParameter('names', $this->namesMatching($workout) ?: ['']);
         }
 
         if (null !== $from) {
@@ -125,6 +128,25 @@ final class WorkoutSessionRepository extends ServiceEntityRepository
         }
 
         return $builder;
+    }
+
+    /**
+     * @return list<int>
+     */
+    private function workoutsNamed(string $workout): array
+    {
+        $wanted = mb_strtolower(trim($workout));
+        /** @var list<array{id: int, name: string}> $workouts */
+        $workouts = $this->getEntityManager()->createQueryBuilder()
+            ->select('w.id', 'w.name')
+            ->from(Workout::class, 'w')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_values(array_map(
+            static fn (array $workout): int => $workout['id'],
+            array_filter($workouts, static fn (array $workout): bool => mb_strtolower($workout['name']) === $wanted),
+        ));
     }
 
     /**

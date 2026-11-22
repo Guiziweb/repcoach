@@ -28,6 +28,15 @@ final class PagesTest extends WebTestCase
         $this->entityManager = $this->emptyDatabase();
     }
 
+    public function testEveryPageShowsTheIconOfTheApp(): void
+    {
+        $this->browser->request('GET', '/');
+
+        $icon = $this->browser->getCrawler()->filter('link[rel="icon"]')->attr('href');
+        self::assertSame('/favicon.svg', $icon);
+        self::assertFileExists(self::getContainer()->getParameter('kernel.project_dir').'/public'.$icon);
+    }
+
     public function testTheMenuOffersToStartASessionWhenNoneIsOpen(): void
     {
         $this->browser->request('GET', '/');

@@ -4,7 +4,13 @@ buddy:
     slow: Doucement, laisse-moi une minute pour souffler.
     placeholder: Parle-moi…
     send: Envoyer
+    confirm: 'Confirmer : {action}'
+    confirmed: "J'ai appuyé sur le bouton."
+    expired: Cette demande n'est plus valable. Redis-moi ce que tu veux faire.
+    full: On a beaucoup parlé, ma mémoire est pleine. Appuie sur ↺ pour repartir sur une nouvelle conversation.
+    resting: "J'ai beaucoup coaché aujourd'hui, je dois me reposer. Reviens demain !"
 menu:
+    language: Langue
     programs: Mes programmes
     sessions: Mes séances
     live: 'Séance en cours · {workout}'
@@ -38,3 +44,9 @@ unit:
     kg: kg
     seconds: s
     minutes: min
+destruction:
+    delete_workout: 'supprimer le programme « {workout} »'
+    remove_exercise: 'retirer {exercise} de « {workout} »'
+    delete_session: 'supprimer la séance {workout} du {date, date, long}'
+    remove_set: 'supprimer la série {effort} de {exercise}'
+    abort_session: 'abandonner la séance {workout} en cours'

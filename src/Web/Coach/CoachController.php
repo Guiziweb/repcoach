@@ -31,6 +31,16 @@ final class CoachController extends AbstractController
         ]);
     }
 
+    #[Route('/confirm', name: 'confirm')]
+    #[RateLimit('coach_client')]
+    #[RateLimit('coach_total', key: 'everyone')]
+    public function confirm(#[MapRequestPayload] ConfirmRequest $confirmation): Response
+    {
+        return $this->render('coach/reply.stream.html.twig', [
+            'reply' => $this->coach->confirm($confirmation->id, $confirmation->screen),
+        ]);
+    }
+
     #[Route('/forget', name: 'forget')]
     public function forget(): Response
     {

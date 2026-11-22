@@ -63,6 +63,22 @@ final class TokenMeterTest extends TestCase
         self::assertSame(220, $this->meter->measure(new TokenUsage(promptTokens: 200, completionTokens: 20))?->conversation);
     }
 
+    public function testItRemembersTheContextOfTheLastAnswer(): void
+    {
+        $this->meter->measure(new TokenUsage(promptTokens: 100, cacheReadTokens: 900));
+        $this->meter->measure(new TokenUsage(promptTokens: 300, cacheReadTokens: 1_700));
+
+        self::assertSame(2_000, $this->meter->context());
+    }
+
+    public function testForgettingEmptiesTheContext(): void
+    {
+        $this->meter->measure(new TokenUsage(promptTokens: 100));
+        $this->meter->reset();
+
+        self::assertSame(0, $this->meter->context());
+    }
+
     public function testNothingIsMeasuredWithoutAUsage(): void
     {
         self::assertNull($this->meter->measure(null));

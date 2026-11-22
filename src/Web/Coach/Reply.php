@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Web\Coach;
 
+use App\Web\Coach\Confirmation\PendingCall;
+
 final readonly class Reply
 {
     /**
@@ -15,6 +17,7 @@ final readonly class Reply
         public ?Consumption $consumption,
         public ?string $visit,
         public bool $refresh,
+        public ?PendingCall $confirm,
     ) {
     }
 }

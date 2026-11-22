@@ -7,7 +7,7 @@
 ![MCP](https://img.shields.io/badge/MCP-server-blueviolet)
 ![License MIT](https://img.shields.io/badge/license-MIT-blue)
 
-An MCP server to log gym workouts from your AI assistant. You tell it what you did, it calls the tools, and the server keeps the numbers. Symfony, SQLite, no front end.
+An MCP server to log gym workouts from your AI assistant. You tell it what you did, it calls the tools, and the server keeps the numbers. Symfony, SQLite, and a small web app where the same coach drives the screens.
 
 The model never does the maths. Volume, durations and dates come from tool results, so when the assistant says "you lifted 12 780 kg on Friday" it read that from the server.
 
@@ -17,7 +17,7 @@ https://github.com/user-attachments/assets/f4dbae54-c4af-424a-8e93-7d48484a9d52
 
 ## Running it
 
-You need PHP 8.4 or later with SQLite, Composer and make.
+You need PHP 8.4 or later with the SQLite and intl extensions, Composer and make. `make install` also downloads the JavaScript the web app uses.
 
 ```
 make install
@@ -57,6 +57,18 @@ claude mcp add repcoach --scope user -- php "$(pwd)/bin/console" mcp:server
 ```
 
 It works the same, but a terminal cannot draw charts of your progress, so a desktop client is the nicer place to use it.
+
+### The web app
+
+The web app shows your programs, your past sessions and the session in progress, with a coach next to the screen. You talk to it in a speech bubble; it calls the same tools as above and the screen follows what it does. Deleting, removing a set or aborting a session waits for you to press a button: the model alone cannot do it.
+
+It needs an Anthropic API key, kept out of git in `.env.local`:
+
+```
+ANTHROPIC_API_KEY=sk-ant-...
+```
+
+`REPCOACH_MODEL` picks another model; it defaults to `claude-haiku-5-5`. Then run `make serve` and open http://127.0.0.1:8010. The interface follows the language of your browser, English or French, and the menu lets you switch. The coach answers in the language you write in.
 
 ## What you can ask
 
@@ -150,7 +162,7 @@ The code is split by domain (`Exercise`, `Workout`, `Session`, `Shared`), with o
 
 ## Tests
 
-`make ci` runs php-cs-fixer, the Symfony lints, PHPStan (max level) and PHPUnit. One test talks to the server over HTTP, a transport only switched on in the test environment, and calls every tool once, so a tool added without a test fails the build. The tests never use the network.
+`make ci` runs php-cs-fixer, the Symfony lints, PHPStan (max level) and PHPUnit. The browser tests drive Chromium through Playwright: install it once with `make browsers`, which needs Node.js 20 or later. One test talks to the server over HTTP, a transport only switched on in the test environment, and calls every tool once, so a tool added without a test fails the build. The tests never use the network.
 
 ## Credits
 

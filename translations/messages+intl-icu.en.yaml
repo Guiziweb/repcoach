@@ -4,7 +4,13 @@ buddy:
     slow: Easy, give me a minute to catch my breath.
     placeholder: Talk to me…
     send: Send
+    confirm: 'Confirm: {action}'
+    confirmed: I pressed the button.
+    expired: That request is no longer valid. Tell me again what you want to do.
+    full: We have talked a lot, my memory is full. Press ↺ to start a fresh conversation.
+    resting: "I have coached a lot today, I need to rest. Come back tomorrow!"
 menu:
+    language: Language
     programs: My programs
     sessions: My sessions
     live: 'Session in progress · {workout}'
@@ -38,3 +44,9 @@ unit:
     kg: kg
     seconds: s
     minutes: min
+destruction:
+    delete_workout: 'delete the workout “{workout}”'
+    remove_exercise: 'remove {exercise} from “{workout}”'
+    delete_session: 'delete the {workout} session of {date, date, long}'
+    remove_set: 'delete the {effort} set of {exercise}'
+    abort_session: 'abort the running {workout} session'

@@ -5,6 +5,7 @@ parameters:
     app.repdb_url: 'https://raw.githubusercontent.com/RepDB/exercise-dataset/free-701-2026-11/exercises.json'
     app.sessions.per_page: 10
     app.coach.tool_prefix: 'repcoach_'
+    app.coach.max_context: 50000
 
 services:
     _defaults:
@@ -25,6 +26,7 @@ services:
             - '../src/Workout/Mcp/{PlannedExerciseView,WorkoutSummary}.php'
             - '../src/Shared/{Effort,ExerciseEffort,PlannedEffort,Limits,Minutes,NotFound,Reason,Refused}.php'
             - '../src/Web/Coach/{CoachRequest,Consumption,Reply}.php'
+            - '../src/Web/Coach/Confirmation/PendingCall.php'
             - '../src/Web/Program/View/'
             - '../src/Web/Session/View/'
 

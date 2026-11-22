@@ -60,6 +60,12 @@ claude mcp add repcoach --scope user -- php "$(pwd)/bin/console" mcp:server
 
 It works the same, but a terminal cannot draw charts of your progress, so a desktop client is the nicer place to use it.
 
+### The web app
+
+The same server also runs a small web app: your programs and sessions on the left, a coach on the right that you talk to. The coach calls the same tools as Claude Desktop, and the screen follows what it does. Deleting something waits for you to press a button.
+
+To run it locally, put the API key of the model in `.env.local`, then `make serve` and open http://127.0.0.1:8010.
+
 ## What you can ask
 
 Talk to it in plain words, in any language. For example:

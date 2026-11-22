@@ -1,0 +1,12 @@
+<div class="bubble" id="bubble" tabindex="0" data-action="click->ask#open keydown.enter->ask#open">
+    <p data-ask-target="text">{{ say }}</p>
+    {% if tools|default([]) is not empty %}
+        <ul class="trail">
+            {% for tool in tools %}
+                <li class="tool{{ tool.reads ? '' : ' is-write' }}">
+                    {{ tool.name }}{% if tool.count > 1 %}<span class="tool-count">×{{ tool.count }}</span>{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>

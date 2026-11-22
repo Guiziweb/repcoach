@@ -1,0 +1,12 @@
+security:
+    providers:
+        nobody:
+            memory: null
+
+    firewalls:
+        dev:
+            pattern: ^/(_profiler(/|$)|(_wdt|assets)/)
+            security: false
+        main:
+            lazy: true
+            provider: nobody

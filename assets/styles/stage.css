@@ -1,6 +1,6 @@
 .stage {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 64% 36%;
     height: 100dvh;
 }
 
@@ -83,6 +83,11 @@
 }
 
 @media (max-width: 720px) {
+    .stage {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+    }
+
     .screen {
         padding: 20px 18px 12px;
     }

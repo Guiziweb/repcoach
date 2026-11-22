@@ -15,6 +15,13 @@ mcp:
             http:
                 path: /mcp
 
+    clients:
+        repcoach:
+            servers:
+                self:
+                    transport: stdio
+                    command: [!php/const PHP_BINARY, '%kernel.project_dir%/bin/console', 'mcp:server', '--env=%kernel.environment%']
+
 when@test:
     mcp:
         servers:

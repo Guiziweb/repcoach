@@ -134,7 +134,7 @@ final class CoachControllerTest extends WebTestCase
     {
         $daily = self::getContainer()->get(DailyTokens::class);
         self::assertInstanceOf(DailyTokens::class, $daily);
-        $daily->spend(3_000_000);
+        $daily->spend(20_000_000);
 
         $this->ask('hello');
 
@@ -145,7 +145,7 @@ final class CoachControllerTest extends WebTestCase
     public function testEveryAnswerSpendsFromTheDailyBudget(): void
     {
         $answer = new TextResult('Noted.');
-        $answer->getMetadata()->add('token_usage', new TokenUsage(promptTokens: 1_000, completionTokens: 3_000_000));
+        $answer->getMetadata()->add('token_usage', new TokenUsage(promptTokens: 1_000, completionTokens: 20_000_000));
         $this->coach()->answers($answer);
         $this->ask('hello');
 
@@ -157,7 +157,7 @@ final class CoachControllerTest extends WebTestCase
     public function testAnAnswerThatFailsHalfwayStillSpendsTheCallsItMade(): void
     {
         $call = new ToolCallResult([new ToolCall('toolu_1', 'look_at_screen', [])]);
-        $call->getMetadata()->add('token_usage', new TokenUsage(promptTokens: 1_000, completionTokens: 3_000_000));
+        $call->getMetadata()->add('token_usage', new TokenUsage(promptTokens: 1_000, completionTokens: 20_000_000));
         $this->coach()->answers($call, new RuntimeException('The model is down.'));
         $this->ask('hello');
 

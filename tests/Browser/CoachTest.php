@@ -20,6 +20,7 @@ use function Playwright\Testing\expect;
 
 final class CoachTest extends PlaywrightTestCase
 {
+    use HasSeenTheHelp;
     use ResetsTheDatabase;
 
     private EntityManagerInterface $entityManager;
@@ -27,6 +28,7 @@ final class CoachTest extends PlaywrightTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->skipTheHelp();
         $this->entityManager = $this->emptyDatabase();
 
         $limits = self::getContainer()->get('cache.rate_limiter');
@@ -39,7 +41,7 @@ final class CoachTest extends PlaywrightTestCase
         $this->visit('/');
 
         $this->fill('form.ask input[name="message"]', 'hello');
-        $this->click('form.ask button');
+        $this->click('form.ask .send');
 
         expect($this->getPage()->locator('#bubble'))->toContainText(ScriptedCoach::DEFAULT_ANSWER);
         expect($this->getPage()->locator('form.ask input[name="message"]'))->toHaveValue('');
@@ -164,7 +166,7 @@ final class CoachTest extends PlaywrightTestCase
     private function send(string $message): void
     {
         $this->fill('form.ask input[name="message"]', $message);
-        $this->click('form.ask button');
+        $this->click('form.ask .send');
     }
 
     private function exists(string $workout): bool

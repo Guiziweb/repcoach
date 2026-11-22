@@ -47,3 +47,25 @@ destruction:
     delete_session: 'delete the {workout} session of {date, date, long}'
     remove_set: 'delete the {effort} set of {exercise}'
     abort_session: 'abort the running {workout} session'
+help:
+    open: What can I ask?
+    close: Close
+    title: What you can ask the coach
+    programs:
+        topic: Programs
+        ask: Create an Arms program with 3 exercises
+    session:
+        topic: Session
+        ask: Start a Push session
+    during: 'Then, as you train, tell it each set: “8 reps at 60 kg”, “60 seconds of plank”, and “I am done” at the end.'
+    history:
+        topic: History
+        ask: Show me my last sessions
+    review:
+        topic: Progress
+        ask: Compare my last two Push sessions
+    hint: Click a sentence and the coach does it; the screen follows.
+    good_to_know: Good to know
+    deletion: Deleting something waits for you to press a button.
+    shared: This demo is shared with every visitor and starts fresh after a few quiet minutes.
+    memory: The memory bar fills with the conversation; ↺ starts over.

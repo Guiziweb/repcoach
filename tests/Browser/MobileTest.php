@@ -20,6 +20,7 @@ use function Playwright\Testing\expect;
 
 final class MobileTest extends PlaywrightTestCase
 {
+    use HasSeenTheHelp;
     use ResetsTheDatabase;
 
     private const int WIDTH = 390;
@@ -37,6 +38,7 @@ final class MobileTest extends PlaywrightTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->skipTheHelp();
         $this->entityManager = $this->emptyDatabase();
 
         $limits = self::getContainer()->get('cache.rate_limiter');
@@ -199,7 +201,7 @@ final class MobileTest extends PlaywrightTestCase
         $this->coach()->answers($answer);
 
         $this->fill('form.ask input[name="message"]', 'hello');
-        $this->click('form.ask button');
+        $this->click('form.ask .send');
 
         expect($this->getPage()->locator('#buddy'))->toHaveClass('buddy is-open');
     }

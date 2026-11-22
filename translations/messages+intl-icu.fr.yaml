@@ -47,3 +47,25 @@ destruction:
     delete_session: 'supprimer la séance {workout} du {date, date, long}'
     remove_set: 'supprimer la série {effort} de {exercise}'
     abort_session: 'abandonner la séance {workout} en cours'
+help:
+    open: Que puis-je demander ?
+    close: Fermer
+    title: Ce que tu peux demander au coach
+    programs:
+        topic: Programmes
+        ask: Crée un programme Bras avec 3 exercices
+    session:
+        topic: Séance
+        ask: Démarre une séance Push
+    during: "Ensuite, pendant l'entraînement, dis-lui chaque série : « 8 reps à 60 kg », « 60 secondes de gainage », et « j'ai fini » à la fin."
+    history:
+        topic: Historique
+        ask: Montre-moi mes dernières séances
+    review:
+        topic: Progrès
+        ask: Compare mes deux dernières séances Push
+    hint: Clique sur une phrase et le coach s'en charge ; l'écran suit.
+    good_to_know: Bon à savoir
+    deletion: Supprimer quelque chose attend que tu cliques sur un bouton.
+    shared: Cette démo est partagée entre tous les visiteurs et repart à zéro après quelques minutes sans visite.
+    memory: La barre « mémoire » se remplit avec la conversation ; ↺ repart de zéro.

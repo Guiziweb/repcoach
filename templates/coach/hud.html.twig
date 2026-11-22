@@ -6,6 +6,7 @@
             <b>{{ (consumption.memory / 100)|format_number(style: 'percent') }}</b>
         </span>
     {% endif %}
+    <button type="button" class="help-toggle" title="{{ 'help.open'|trans }}" aria-label="{{ 'help.open'|trans }}" data-action="help#toggle">?</button>
     <form action="{{ path('coach_forget') }}" method="post">
         <input type="hidden" name="_token" value="{{ csrf_token('coach') }}">
         <button class="forget" title="{{ 'hud.forget'|trans }}" aria-label="{{ 'hud.forget'|trans }}">↺</button>

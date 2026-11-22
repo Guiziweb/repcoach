@@ -28,6 +28,10 @@ lint:
 	php bin/console lint:yaml config fixtures --no-interaction
 	php bin/console lint:container --no-interaction
 	php bin/console doctrine:schema:validate --skip-sync --no-interaction
+	rm -f var/data_migrations.db
+	DATABASE_URL="sqlite:///%kernel.project_dir%/var/data_migrations.db" php bin/console doctrine:migrations:migrate --env=test --no-interaction --quiet
+	DATABASE_URL="sqlite:///%kernel.project_dir%/var/data_migrations.db" php bin/console doctrine:schema:validate --env=test --no-interaction
+	rm -f var/data_migrations.db
 
 stan:
 	php bin/console cache:warmup --env=test --quiet

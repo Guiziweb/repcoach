@@ -58,18 +58,6 @@ claude mcp add repcoach --scope user -- php "$(pwd)/bin/console" mcp:server
 
 It works the same, but a terminal cannot draw charts of your progress, so a desktop client is the nicer place to use it.
 
-### The web app
-
-The web app shows your programs, your past sessions and the session in progress, with a coach next to the screen. You talk to it in a speech bubble; it calls the same tools as above and the screen follows what it does. Deleting, removing a set or aborting a session waits for you to press a button: the model alone cannot do it.
-
-It needs an Anthropic API key, kept out of git in `.env.local`:
-
-```
-ANTHROPIC_API_KEY=sk-ant-...
-```
-
-`REPCOACH_MODEL` picks another model; it defaults to `claude-haiku-5-5`. Then run `make serve` and open http://127.0.0.1:8010. The interface follows the language of your browser, English or French, and the menu lets you switch. The coach answers in the language you write in.
-
 ## What you can ask
 
 Talk to it in plain words, in any language. For example:

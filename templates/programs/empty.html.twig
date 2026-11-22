@@ -1,0 +1,7 @@
+{% extends 'layout.html.twig' %}
+
+{% block screen %}
+    {{ include('screen/head.html.twig', {kicker: 'programs.title'|trans}) }}
+
+    <p class="empty">{{ 'programs.none'|trans }}</p>
+{% endblock %}

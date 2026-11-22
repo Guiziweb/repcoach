@@ -5,10 +5,13 @@
     "prefer-stable": true,
     "require": {
         "php": ">=8.4",
+        "ext-intl": "*",
         "doctrine/doctrine-bundle": "^3.3",
         "doctrine/doctrine-migrations-bundle": "^4.0",
         "doctrine/orm": "^3.7",
         "nyholm/psr7": "^1.8",
+        "pagerfanta/core": "^4.11",
+        "symfony/asset-mapper": "^8.1",
         "symfony/clock": "8.1.*",
         "symfony/console": "8.1.*",
         "symfony/flex": "^2.12",
@@ -17,9 +20,15 @@
         "symfony/mcp-bundle": "^1.0@beta",
         "symfony/monolog-bundle": "^4.1",
         "symfony/runtime": "8.1.*",
+        "symfony/stimulus-bundle": "^3.7",
+        "symfony/translation": "^8.1",
+        "symfony/twig-bundle": "^8.1",
+        "symfony/ux-turbo": "^3.7",
         "symfony/validator": "8.1.*",
         "symfony/workflow": "8.1.*",
-        "symfony/yaml": "8.1.*"
+        "symfony/yaml": "8.1.*",
+        "twig/extra-bundle": "^3.29",
+        "twig/intl-extra": "^3.30"
     },
     "config": {
         "allow-plugins": {
@@ -43,8 +52,15 @@
     "scripts": {
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
-        }
+            "assets:install %PUBLIC_DIR%": "symfony-cmd",
+            "importmap:install": "symfony-cmd"
+        },
+        "post-install-cmd": [
+            "@auto-scripts"
+        ],
+        "post-update-cmd": [
+            "@auto-scripts"
+        ]
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^4.3",
@@ -55,7 +71,10 @@
         "phpstan/phpstan-doctrine": "^2.1",
         "phpstan/phpstan-symfony": "^2.1",
         "phpunit/phpunit": "^13.4",
+        "playwright-php/playwright-symfony": "^0.12.0",
         "symfony/browser-kit": "8.1.*",
-        "symfony/dotenv": "8.1.*"
+        "symfony/css-selector": "^8.1",
+        "symfony/dotenv": "8.1.*",
+        "symfony/web-profiler-bundle": "^8.1"
     }
 }

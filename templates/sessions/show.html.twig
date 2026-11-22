@@ -1,0 +1,27 @@
+{% extends 'layout.html.twig' %}
+
+{% block screen %}
+    {% set session = view.session %}
+
+    {{ include('screen/head.html.twig', {kicker: 'sessions.title'|trans, back: path('sessions', {page: view.listPage}), back_label: 'sessions.title'|trans}) }}
+
+    <nav class="switcher is-session">
+        {{ include('screen/switch.html.twig', {direction: 'previous', to: view.previous ? path('session', {id: view.previous.id}), label: view.previous.workoutName ?? ''}) }}
+        <h1>{{ session.workoutName }}</h1>
+        {{ include('screen/switch.html.twig', {direction: 'next', to: view.next ? path('session', {id: view.next.id}), label: view.next.workoutName ?? ''}) }}
+        <p class="session-when">
+            <b>{{ session.startedAt|format_datetime(pattern: 'EEEE d MMMM') }}</b>
+            {{ session.startedAt|format_datetime(pattern: 'HH:mm') }} · {{ view.duration.minutes }} {{ 'unit.minutes'|trans }}
+        </p>
+    </nav>
+
+    <ol class="plan">
+        {% for exercise, sets in view.exercises %}
+            {{ include('screen/line.html.twig', {position: loop.index, exercise: exercise, sets: sets}) }}
+        {% else %}
+            <li class="empty">{{ 'sessions.empty'|trans }}</li>
+        {% endfor %}
+    </ol>
+
+    {{ include('screen/totals.html.twig') }}
+{% endblock %}

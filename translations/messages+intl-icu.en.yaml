@@ -1,0 +1,28 @@
+menu:
+    programs: My programs
+    sessions: My sessions
+    live: 'Session in progress · {workout}'
+    start: Start a session
+live:
+    title: Session in progress
+    none: No session in progress. Tell me which program to start.
+    running: In progress
+    empty: "No set yet."
+    paused: Paused
+nav:
+    menu: Menu
+programs:
+    title: My programs
+    none: No program yet. Ask me to build one.
+    empty: This program is empty. Tell me what to add.
+sessions:
+    title: My sessions
+    none: No session yet.
+    empty: "This session has no set."
+    reps: '{count, plural, one {rep} other {reps}}'
+    sets: '{count, plural, one {set} other {sets}}'
+    page: 'Page {page} of {pages}'
+unit:
+    kg: kg
+    seconds: s
+    minutes: min

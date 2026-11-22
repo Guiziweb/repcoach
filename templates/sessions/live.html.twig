@@ -1,0 +1,33 @@
+{% extends 'layout.html.twig' %}
+
+{% block screen %}
+    {{ include('screen/head.html.twig', {kicker: 'live.title'|trans}) }}
+
+    {% if view is null %}
+        <p class="empty">{{ 'live.none'|trans }}</p>
+    {% else %}
+        {% set session = view.session %}
+
+        <header class="screen-title">
+            <h1>{{ session.workoutName }}</h1>
+            <p class="session-when">
+                <b>{{ ('live.' ~ session.status.value)|trans }}</b>
+                {{ session.startedAt|format_datetime(pattern: 'HH:mm') }} · <span class="chrono" data-controller="chrono" data-chrono-seconds-value="{{ view.duration.seconds }}" data-chrono-running-value="{{ session.status.running ? 'true' : 'false' }}">{{ view.duration.clock }}</span>
+            </p>
+        </header>
+
+        <ol class="plan">
+            {% for line in view.lines %}
+                {{ include('screen/line.html.twig', {position: line.planned.position, exercise: line.planned.exercise.name, sets: line.done, target: line.planned, left: line.remaining, complete: line.remaining == 0}) }}
+            {% endfor %}
+            {% for exercise, sets in view.extras %}
+                {{ include('screen/line.html.twig', {position: '+', exercise: exercise, sets: sets}) }}
+            {% endfor %}
+            {% if view.lines is empty and view.extras is empty %}
+                <li class="empty">{{ 'live.empty'|trans }}</li>
+            {% endif %}
+        </ol>
+
+        {{ include('screen/totals.html.twig') }}
+    {% endif %}
+{% endblock %}

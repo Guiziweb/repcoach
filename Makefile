@@ -1,7 +1,10 @@
-.PHONY: install migrate import fixtures cs cs-fix lint stan test ci
+.PHONY: install browsers migrate import fixtures serve cs cs-fix lint stan test ci
 
 install:
 	composer install
+
+browsers:
+	vendor/bin/playwright-install chromium
 
 migrate:
 	php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
@@ -11,6 +14,9 @@ import:
 
 fixtures:
 	php bin/console doctrine:fixtures:load --no-interaction --purge-exclusions=exercise
+
+serve:
+	php -S 127.0.0.1:8010 -t public
 
 cs:
 	vendor/bin/php-cs-fixer check --diff
@@ -24,7 +30,7 @@ lint:
 	php bin/console doctrine:schema:validate --skip-sync --no-interaction
 
 stan:
-	php bin/console cache:warmup --env=dev --quiet
+	php bin/console cache:warmup --env=test --quiet
 	vendor/bin/phpstan analyse --no-progress
 
 test:

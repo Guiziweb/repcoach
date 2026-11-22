@@ -286,7 +286,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         }>,
  *     },
  *     asset_mapper?: bool|array{ // Asset Mapper configuration
- *         enabled?: bool|Param, // Default: false
+ *         enabled?: bool|Param, // Default: true
  *         paths?: Param|string|array<string, scalar|Param|null>,
  *         excluded_patterns?: list<scalar|Param|null>,
  *         exclude_dotfiles?: bool|Param, // If true, any files starting with "." will be excluded from the asset mapper. // Default: true
@@ -305,7 +305,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         },
  *     },
  *     translator?: bool|array{ // Translator configuration
- *         enabled?: bool|Param, // Default: false
+ *         enabled?: bool|Param, // Default: true
  *         fallbacks?: Param|string|list<scalar|Param|null>,
  *         logging?: bool|Param, // Default: false
  *         formatter?: scalar|Param|null, // Default: "translator.formatter.default"
@@ -1163,6 +1163,151 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         },
  *     }>,
  * }
+ * @psalm-type TwigConfig = array{
+ *     form_themes?: list<scalar|Param|null>,
+ *     globals?: array<string, array{ // Default: []
+ *         id?: scalar|Param|null,
+ *         type?: scalar|Param|null,
+ *         value?: mixed,
+ *         ...<string, mixed>
+ *     }>,
+ *     autoescape_service?: scalar|Param|null, // Default: null
+ *     autoescape_service_method?: scalar|Param|null, // Default: null
+ *     cache?: scalar|Param|null, // Default: true
+ *     charset?: scalar|Param|null, // Default: "%kernel.charset%"
+ *     debug?: bool|Param, // Default: "%kernel.debug%"
+ *     strict_variables?: bool|Param, // Default: "%kernel.debug%"
+ *     auto_reload?: scalar|Param|null,
+ *     optimizations?: int|Param,
+ *     default_path?: scalar|Param|null, // The default path used to load templates. // Default: "%kernel.project_dir%/templates"
+ *     file_name_pattern?: Param|string|list<scalar|Param|null>,
+ *     paths?: array<string, mixed>,
+ *     date?: array{ // The default format options used by the date filter.
+ *         format?: scalar|Param|null, // Default: "F j, Y H:i"
+ *         interval_format?: scalar|Param|null, // Default: "%d days"
+ *         timezone?: scalar|Param|null, // The timezone used when formatting dates, when set to null, the timezone returned by date_default_timezone_get() is used. // Default: null
+ *     },
+ *     number_format?: array{ // The default format options for the number_format filter.
+ *         decimals?: int|Param, // Default: 0
+ *         decimal_point?: scalar|Param|null, // Default: "."
+ *         thousands_separator?: scalar|Param|null, // Default: ","
+ *     },
+ *     mailer?: array{
+ *         html_to_text_converter?: scalar|Param|null, // A service implementing the "Symfony\Component\Mime\HtmlToTextConverter\HtmlToTextConverterInterface". // Default: null
+ *     },
+ * }
+ * @psalm-type StimulusConfig = array{
+ *     controller_paths?: list<scalar|Param|null>,
+ *     controllers_json?: scalar|Param|null, // Default: "%kernel.project_dir%/assets/controllers.json"
+ * }
+ * @psalm-type TurboConfig = array{
+ *     broadcast?: bool|array{
+ *         enabled?: bool|Param, // Default: true
+ *         entity_template_prefixes?: list<scalar|Param|null>,
+ *         doctrine_orm?: bool|array{ // Enable the Doctrine ORM integration
+ *             enabled?: bool|Param, // Default: true
+ *         },
+ *     },
+ *     default_transport?: scalar|Param|null, // Default: "default"
+ *     mercure?: array{
+ *         ignore_cookie_domain_errors?: bool|Param, // Render nothing and log a warning, instead of failing, when the authorization cookie of a private stream source cannot be created because the page is served on another domain than the hub // Default: false
+ *     },
+ * }
+ * @psalm-type WebProfilerConfig = array{
+ *     toolbar?: bool|array{ // Profiler toolbar configuration
+ *         enabled?: bool|Param, // Default: false
+ *         ajax_replace?: bool|Param, // Replace toolbar on AJAX requests // Default: false
+ *     },
+ *     intercept_redirects?: bool|Param, // Default: false
+ *     excluded_ajax_paths?: scalar|Param|null, // Default: "^/((index|app(_[\\w]+)?)\\.php/)?_wdt"
+ * }
+ * @psalm-type TwigExtraConfig = array{
+ *     cache?: bool|array{
+ *         enabled?: bool|Param, // Default: false
+ *     },
+ *     html?: bool|array{
+ *         enabled?: bool|Param, // Default: false
+ *     },
+ *     markdown?: bool|array{
+ *         enabled?: bool|Param, // Default: false
+ *     },
+ *     intl?: bool|array{
+ *         enabled?: bool|Param, // Default: true
+ *     },
+ *     cssinliner?: bool|array{
+ *         enabled?: bool|Param, // Default: false
+ *     },
+ *     inky?: bool|array{
+ *         enabled?: bool|Param, // Default: false
+ *     },
+ *     string?: bool|array{
+ *         enabled?: bool|Param, // Default: false
+ *     },
+ *     commonmark?: array{
+ *         renderer?: array{ // Array of options for rendering HTML.
+ *             block_separator?: scalar|Param|null,
+ *             inner_separator?: scalar|Param|null,
+ *             soft_break?: scalar|Param|null,
+ *         },
+ *         html_input?: "strip"|"allow"|"escape"|Param, // How to handle HTML input.
+ *         allow_unsafe_links?: bool|Param, // Remove risky link and image URLs by setting this to false. // Default: true
+ *         max_nesting_level?: int|Param, // The maximum nesting level for blocks. // Default: 9223372036854775807
+ *         max_delimiters_per_line?: int|Param, // The maximum number of strong/emphasis delimiters per line. // Default: 9223372036854775807
+ *         slug_normalizer?: array{ // Array of options for configuring how URL-safe slugs are created.
+ *             instance?: mixed,
+ *             max_length?: int|Param, // Default: 255
+ *             unique?: mixed,
+ *         },
+ *         commonmark?: array{ // Array of options for configuring the CommonMark core extension.
+ *             enable_em?: bool|Param, // Default: true
+ *             enable_strong?: bool|Param, // Default: true
+ *             use_asterisk?: bool|Param, // Default: true
+ *             use_underscore?: bool|Param, // Default: true
+ *             unordered_list_markers?: list<scalar|Param|null>,
+ *         },
+ *         ...<string, mixed>
+ *     },
+ * }
+ * @psalm-type PlaywrightConfig = array{
+ *     enabled?: bool|Param, // Enable Playwright Symfony integration // Default: true
+ *     intercepted_hosts?: list<scalar|Param|null>,
+ *     debug?: bool|Param, // Enable debug mode for Playwright integration // Default: "%kernel.debug%"
+ *     node_path?: scalar|Param|null, // Path to the Node.js executable running the Playwright server (auto-detected when null, can be overridden per browser) // Default: null
+ *     default_browser?: scalar|Param|null, // Name of the default Playwright browser to autowire // Default: "default"
+ *     base_url?: scalar|Param|null, // Base URL used when Playwright builds absolute URLs during tests (defaults to the PLAYWRIGHT_BASE_URL env var when defined, http://localhost otherwise) // Default: "%env(default::PLAYWRIGHT_BASE_URL)%"
+ *     debug_logging?: bool|Param, // Enable verbose Playwright logging without requiring environment variables // Default: false
+ *     browsers?: array<string, array{ // Default: {"default":{"type":"chromium","headless":true,"timeout_ms":30000,"slowmo_ms":0,"args":[],"env":[]}}
+ *         type?: "chromium"|"firefox"|"webkit"|Param, // Browser engine type // Default: "chromium"
+ *         headless?: bool|Param, // Default: true
+ *         timeout_ms?: int|Param, // Timeout in milliseconds for Playwright operations // Default: 30000
+ *         slowmo_ms?: int|Param, // Slow down every operation by the given milliseconds // Default: 0
+ *         args?: list<scalar|Param|null>,
+ *         env?: array<string, scalar|Param|null>,
+ *         node_path?: scalar|Param|null, // Override global node_path for this browser // Default: null
+ *         min_node_version?: scalar|Param|null, // Minimum Node.js version required to launch the server // Default: "20.0.0"
+ *         channel?: scalar|Param|null, // Browser distribution channel, e.g. chrome-beta or msedge // Default: null
+ *         screenshot_dir?: scalar|Param|null, // Default directory where page screenshots are saved // Default: null
+ *         downloads_dir?: scalar|Param|null, // Directory where downloads are stored // Default: null
+ *         videos_dir?: scalar|Param|null, // Directory where context videos are recorded // Default: null
+ *         tracing?: array{ // Record a Playwright trace for contexts created from this configuration
+ *             enabled?: bool|Param, // Default: false
+ *             dir?: scalar|Param|null, // Default: null
+ *             screenshots?: bool|Param, // Default: false
+ *             snapshots?: bool|Param, // Default: false
+ *         },
+ *         proxy?: array{ // Proxy applied to the browser
+ *             server?: scalar|Param|null, // Proxy server, e.g. http://host:port
+ *             username?: scalar|Param|null, // Default: null
+ *             password?: scalar|Param|null, // Default: null
+ *             bypass?: scalar|Param|null, // Comma-separated hosts to bypass // Default: null
+ *         },
+ *     }>,
+ *     assets?: array{ // Asset handling configuration used by the in-process dev server bridge
+ *         public_roots?: list<scalar|Param|null>,
+ *         prefixes?: list<scalar|Param|null>,
+ *         disable_cache?: bool|Param, // Disable HTTP caching of assets served via the bridge (useful for tests) // Default: true
+ *     },
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1172,6 +1317,10 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     doctrine_migrations?: DoctrineMigrationsConfig,
  *     mcp?: McpConfig,
  *     monolog?: MonologConfig,
+ *     twig?: TwigConfig,
+ *     stimulus?: StimulusConfig,
+ *     turbo?: TurboConfig,
+ *     twig_extra?: TwigExtraConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1181,6 +1330,11 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         doctrine_migrations?: DoctrineMigrationsConfig,
  *         mcp?: McpConfig,
  *         monolog?: MonologConfig,
+ *         twig?: TwigConfig,
+ *         stimulus?: StimulusConfig,
+ *         turbo?: TurboConfig,
+ *         web_profiler?: WebProfilerConfig,
+ *         twig_extra?: TwigExtraConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1191,6 +1345,10 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         doctrine_migrations?: DoctrineMigrationsConfig,
  *         mcp?: McpConfig,
  *         monolog?: MonologConfig,
+ *         twig?: TwigConfig,
+ *         stimulus?: StimulusConfig,
+ *         turbo?: TurboConfig,
+ *         twig_extra?: TwigExtraConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1201,6 +1359,12 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         doctrine_migrations?: DoctrineMigrationsConfig,
  *         mcp?: McpConfig,
  *         monolog?: MonologConfig,
+ *         twig?: TwigConfig,
+ *         stimulus?: StimulusConfig,
+ *         turbo?: TurboConfig,
+ *         web_profiler?: WebProfilerConfig,
+ *         twig_extra?: TwigExtraConfig,
+ *         playwright?: PlaywrightConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

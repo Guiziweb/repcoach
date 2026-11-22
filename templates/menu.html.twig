@@ -1,0 +1,15 @@
+{% extends 'layout.html.twig' %}
+
+{% block screen %}
+    <h1 class="logo">[repcoach]</h1>
+
+    <nav class="menu">
+        {% if live %}
+            <a class="menu-item is-live" href="{{ path('live_session') }}">{{ 'menu.live'|trans({workout: live.workoutName}) }}</a>
+        {% else %}
+            <a class="menu-item" href="{{ path('live_session') }}">{{ 'menu.start'|trans }}</a>
+        {% endif %}
+        <a class="menu-item" href="{{ path('programs') }}">{{ 'menu.programs'|trans }}</a>
+        <a class="menu-item" href="{{ path('sessions') }}">{{ 'menu.sessions'|trans }}</a>
+    </nav>
+{% endblock %}

@@ -1,0 +1,16 @@
+.git
+.github
+.vercel
+.env.local
+.env.*.local
+.env.local.php
+.php-cs-fixer.cache
+.phpunit.cache
+node_modules
+tests
+var
+vendor
+assets/vendor
+public/assets
+public/bundles
+video
